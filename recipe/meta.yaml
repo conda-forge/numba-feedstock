@@ -70,6 +70,7 @@ test:
   files:
     - run_test.py
   commands:
+    - export PYTHONIOENCODING="utf-8"
     - python -m numba.runtests
 
 about:
