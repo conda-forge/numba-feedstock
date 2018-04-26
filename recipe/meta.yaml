@@ -70,7 +70,11 @@ test:
   files:
     - run_test.py
   commands:
+    - export PYTHONIOENCODING="utf-8"
+    - export TMPDIR="$(pwd)/temp"
+    - mkdir "${TMPDIR}"
     - python -m numba.runtests
+
 about:
   home: http://numba.github.com
   license: BSD 2-clause
