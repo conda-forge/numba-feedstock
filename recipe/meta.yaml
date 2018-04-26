@@ -71,6 +71,8 @@ test:
     - run_test.py
   commands:
     - export PYTHONIOENCODING="utf-8"
+    - export TMPDIR="$(pwd)/temp"
+    - mkdir "${TMPDIR}"
     - python -m numba.runtests
 
 about:
