@@ -17,12 +17,13 @@ source:
 build:
   number: 0
   skip: true  # [win]
-  script: python setup.py install  --single-version-externally-managed --record=record.txt
+  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv"
 
 requirements:
   build:
     - python
     - setuptools
+    - pip
     - llvmlite 0.24.*
     - numpy 1.11.*
     - enum34  # [py2k]
