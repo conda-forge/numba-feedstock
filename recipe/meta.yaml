@@ -1,7 +1,7 @@
 {% set name = "numba" %}
-{% set version = "0.38.1" %}
+{% set version = "0.39.0" %}
 {% set hash_type = "sha256" %}
-{% set hash_value = "48fb76b8dcde868d6426c7c7836b76a0b2b20861547770c27b6307f712c09bc5" %}
+{% set hash_value = "07749d1ddac8c4c0ce8b22bf3dec52ef2fd4922174c71447126807f5f8dc2bae" %}
 
 package:
   name: '{{ name|lower }}'
@@ -11,26 +11,31 @@ source:
   fn: '{{ name }}-{{ version }}.tar.gz'
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
   '{{ hash_type }}': '{{ hash_value }}'
-  patches:
-    - PR_2932.patch
 
 build:
   number: 0
   skip: true  # [win]
-  script: python setup.py install  --single-version-externally-managed --record=record.txt
+  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv"
+  entry_points:
+    - pycc = numba.pycc:main
+    - numba = numba.numba_entry:main
 
 requirements:
   build:
+    - {{ compiler("c") }}
+    - {{ compiler("cxx") }}
+  host:
     - python
     - setuptools
-    - llvmlite ==0.23.0
+    - pip
+    - llvmlite 0.24.*
     - numpy 1.11.*
     - enum34  # [py2k]
     - singledispatch  # [py2k]
     - funcsigs  # [py2k]
   run:
     - python
-    - llvmlite ==0.23.0
+    - llvmlite 0.24.*
     - numpy >=1.11
     - enum34  # [py2k]
     - singledispatch  # [py2k]
@@ -39,6 +44,14 @@ requirements:
 test:
   requires:
     - scipy
+    # Required to test optional Numba features
+    - cffi
+    - scipy
+    - ipython
+    - setuptools
+    # Need these for AOT. Do not init msvc as it may not be present
+    - {{ compiler('c') }}      # [not win]
+    - {{ compiler('cxx') }}    # [not win]
   imports:
     - numba
     - numba.annotations
