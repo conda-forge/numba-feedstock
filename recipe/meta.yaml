@@ -16,6 +16,9 @@ build:
   number: 0
   skip: true  # [win]
   script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv"
+  entry_points:
+    - pycc = numba.pycc:main
+    - numba = numba.numba_entry:main
 
 requirements:
   build:
@@ -37,11 +40,18 @@ requirements:
     - enum34  # [py2k]
     - singledispatch  # [py2k]
     - funcsigs  # [py2k]
-    - jinja2
 
 test:
   requires:
     - scipy
+    # Required to test optional Numba features
+    - cffi
+    - scipy
+    - ipython
+    - setuptools
+    # Need these for AOT. Do not init msvc as it may not be present
+    - {{ compiler('c') }}      # [not win]
+    - {{ compiler('cxx') }}    # [not win]
   imports:
     - numba
     - numba.annotations
