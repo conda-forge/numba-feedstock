@@ -37,6 +37,7 @@ requirements:
     - enum34  # [py2k]
     - singledispatch  # [py2k]
     - funcsigs  # [py2k]
+    - jinja2
 
 test:
   requires:
