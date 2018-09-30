@@ -15,7 +15,7 @@ build:
   entry_points:
     - pycc = numba.pycc:main
     - numba = numba.numba_entry:main
-  script: python setup.py install  --single-version-externally-managed --record=record.txt
+  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv"
 
 requirements:
   build:
@@ -23,6 +23,7 @@ requirements:
     - {{ compiler('cxx') }}
   host:
     - python
+    - pip
     - setuptools
     - llvmlite 0.25.*
     - numpy
