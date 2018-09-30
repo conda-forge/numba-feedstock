@@ -21,14 +21,14 @@ requirements:
   build:
     - python
     - setuptools
-    - llvmlite ==0.23.0
+    - llvmlite 0.25.*
     - numpy 1.11.*
     - enum34  # [py2k]
     - singledispatch  # [py2k]
     - funcsigs  # [py2k]
   run:
     - python
-    - llvmlite ==0.23.0
+    - llvmlite 0.25.*
     - numpy >=1.11
     - enum34  # [py2k]
     - singledispatch  # [py2k]
