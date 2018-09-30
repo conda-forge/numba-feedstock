@@ -39,7 +39,15 @@ requirements:
 
 test:
   requires:
+    - jinja2
+    # Required to test optional Numba features
+    - cffi
     - scipy
+    - ipython
+    - setuptools
+    # Need these for AOT. Do not init msvc as it may not be present
+    - {{ compiler('c') }}      # [not win]
+    - {{ compiler('cxx') }}    # [not win]
   imports:
     - numba
     - numba.annotations
@@ -71,9 +79,7 @@ test:
     - numba.typing
     - numba.unsafe
   files:
-    - run_test.py
-  commands:
-    - python -m numba.runtests
+    - mandel.py
 
 about:
   home: http://numba.github.com

@@ -1,5 +1,3 @@
-# Test is adapted fron Numba repository here- https://github.com/numba/numba/blob/master/buildscripts/condarecipe.local/mandel.py
-
 from numba import autojit
 import numpy as np
 #from pylab import imshow, jet, show, ion
