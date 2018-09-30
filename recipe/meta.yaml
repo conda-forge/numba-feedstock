@@ -1,44 +1,54 @@
-{% set name = "numba" %}
-{% set version = "0.38.1" %}
-{% set hash_type = "sha256" %}
-{% set hash_value = "48fb76b8dcde868d6426c7c7836b76a0b2b20861547770c27b6307f712c09bc5" %}
+{% set version = "0.40.0" %}
+{% set sha256 = "2510fbeee71c07bbd0987d4fbbcb8fa6b02f95da8a81ebc0e31b825dda198f45" %}
 
 package:
-  name: '{{ name|lower }}'
-  version: '{{ version }}'
+  name: numba
+  version: {{ version }}
 
 source:
-  fn: '{{ name }}-{{ version }}.tar.gz'
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  '{{ hash_type }}': '{{ hash_value }}'
-  patches:
-    - PR_2932.patch
+  url: https://pypi.io/packages/source/n/numba/numba-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
 
 build:
   number: 0
-  skip: true  # [win]
-  script: python setup.py install  --single-version-externally-managed --record=record.txt
+  skip: True  # [win]
+  entry_points:
+    - pycc = numba.pycc:main
+    - numba = numba.numba_entry:main
+  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv"
 
 requirements:
   build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+  host:
     - python
+    - pip
     - setuptools
-    - llvmlite ==0.23.0
-    - numpy 1.11.*
-    - enum34  # [py2k]
+    - llvmlite 0.25.*
+    - numpy
+    - enum34          # [py2k]
     - singledispatch  # [py2k]
-    - funcsigs  # [py2k]
+    - funcsigs        # [py2k]
   run:
     - python
-    - llvmlite ==0.23.0
-    - numpy >=1.11
-    - enum34  # [py2k]
+    - {{ pin_compatible('llvmlite', max_pin='x.x') }}
+    - {{ pin_compatible('numpy') }}
+    - enum34          # [py2k]
     - singledispatch  # [py2k]
-    - funcsigs  # [py2k]
+    - funcsigs        # [py2k]
 
 test:
   requires:
+    - jinja2
+    # Required to test optional Numba features
+    - cffi
     - scipy
+    - ipython
+    - setuptools
+    # Need these for AOT. Do not init msvc as it may not be present
+    - {{ compiler('c') }}      # [not win]
+    - {{ compiler('cxx') }}    # [not win]
   imports:
     - numba
     - numba.annotations
@@ -70,9 +80,8 @@ test:
     - numba.typing
     - numba.unsafe
   files:
-    - run_test.py
-  commands:
-    - python -m numba.runtests
+    - mandel.py
+
 about:
   home: http://numba.github.com
   license: BSD 2-clause
