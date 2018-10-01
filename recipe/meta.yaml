@@ -79,8 +79,6 @@ test:
     - numba.types
     - numba.typing
     - numba.unsafe
-  files:
-    - mandel.py
 
 about:
   home: http://numba.github.com
