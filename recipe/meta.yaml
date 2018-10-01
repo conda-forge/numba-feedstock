@@ -1,12 +1,12 @@
 {% set version = "0.40.0" %}
-{% set sha256 = "2510fbeee71c07bbd0987d4fbbcb8fa6b02f95da8a81ebc0e31b825dda198f45" %}
+{% set sha256 = "a26f899a0fda9ca282f87587e0e9254d90b07b6ae8bc9a827ebcd6847a48c41b" %}
 
 package:
   name: numba
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/n/numba/numba-{{ version }}.tar.gz
+  url: https://github.com/numba/numba/archive/{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
 build:
@@ -15,7 +15,9 @@ build:
   entry_points:
     - pycc = numba.pycc:main
     - numba = numba.numba_entry:main
-  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv"
+  script:
+    - "{{ PYTHON }} buildscripts/remove_unwanted_files.py"
+    - "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv"
   ignore_run_exports:
       # TBB is entirely optional
       - tbb
