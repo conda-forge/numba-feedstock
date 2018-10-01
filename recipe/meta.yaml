@@ -27,6 +27,7 @@ requirements:
     - setuptools
     - llvmlite 0.25.*
     - numpy
+    - tbb-devel >=2018.0.5
     - enum34          # [py2k]
     - singledispatch  # [py2k]
     - funcsigs        # [py2k]
@@ -34,6 +35,7 @@ requirements:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
     - {{ pin_compatible('numpy') }}
+    - tbb >=2018.0.5
     - enum34          # [py2k]
     - singledispatch  # [py2k]
     - funcsigs        # [py2k]
