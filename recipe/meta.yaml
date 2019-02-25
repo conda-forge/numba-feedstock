@@ -1,22 +1,24 @@
-{% set version = "0.41.0" %}
-{% set sha256 = "3d5725a2719d45e736d5acfbee63c9e7d5fab3b6406f59257fea6d10dbf5f416" %}
+{% set name = "numba" %}
+{% set version = "0.42.1" %}
+{% set sha256 = "e6cc895d40e4b8e034acadce775d99c9ad8972f349ee8890b0a77ff183af52a9" %}
 
 package:
   name: numba
   version: {{ version }}
 
 source:
-  url: https://github.com/numba/numba/archive/{{ version }}.tar.gz
+  # url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz  # 0.42.1 is N/A in pypi
+  url: https://github.com/numba/{{ name }}/archive/{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
 build:
-  number: 1000
+  number: 0
   skip: True  # [win]
   entry_points:
     - pycc = numba.pycc:main
     - numba = numba.numba_entry:main
   script:
-    - "{{ PYTHON }} buildscripts/remove_unwanted_files.py"
+    - "{{ PYTHON }} buildscripts/remove_unwanted_files.py"   # the script is not available in pypi tar-ball
     - "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv"
   ignore_run_exports:
       # TBB is entirely optional
@@ -31,8 +33,8 @@ requirements:
     - python
     - pip
     - setuptools
-    - llvmlite 0.26.*
-    - numpy
+    - llvmlite 0.27.*
+    - numpy 1.15.*    # with numpy 1.16, many tests fail
     - tbb-devel >=2018.0.5  # [linux]
     - enum34          # [py2k]
     - singledispatch  # [py2k]
@@ -42,6 +44,8 @@ requirements:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
     - {{ pin_compatible('numpy') }}
+    - llvmlite 0.27.* # otherwise conda test picks up llvmlite >= 0.28
+    - numpy 1.15.*
     - enum34          # [py2k]
     - singledispatch  # [py2k]
     - funcsigs        # [py2k]
@@ -60,7 +64,9 @@ test:
     - scipy
     - ipython
     - setuptools
-    - tbb  # [linux]
+    - faulthandler             # [py2k]
+    - tbb >=2018.0.5           # [linux]
+    - intel-openmp             # [osx]
     # Need these for AOT. Do not init msvc as it may not be present
     - {{ compiler('c') }}      # [not win]
     - {{ compiler('cxx') }}    # [not win]
