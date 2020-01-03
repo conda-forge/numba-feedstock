@@ -12,7 +12,7 @@ source:
   sha256: {{ sha256 }}
 
 build:
-  number: 1
+  number: 2
   entry_points:
     - pycc = numba.pycc:main
     - numba = numba.numba_entry:main
