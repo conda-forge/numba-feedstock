@@ -1,6 +1,6 @@
 {% set name = "numba" %}
-{% set version = "0.49.1" %}
-{% set sha256 = "f430bb27c61379135be664dd1a105862d9656ac426ad343bb5c84dc2bcca4cc3" %}
+{% set version = "0.50.1" %}
+{% set sha256 = "f45d6a85c8aedde8c99e775070f3fa699d6b941f0f635e268c14b3561d787789" %}
 
 package:
   name: numba
@@ -12,7 +12,7 @@ source:
   sha256: {{ sha256 }}
 
 build:
-  number: 2 
+  number: 0 
   entry_points:
     - pycc = numba.pycc:main
     - numba = numba.misc.numba_entry:main
@@ -69,7 +69,7 @@ test:
 
   imports:
     - numba
-    - numba.annotations
+    - numba.core.annotations
     - numba.cuda
     - numba.cuda.cudadrv
     - numba.cuda.kernels
@@ -81,20 +81,20 @@ test:
     - numba.cuda.tests.cudapy
     - numba.cuda.tests.cudasim
     - numba.cuda.tests.nocuda
-    - numba.datamodel
+    - numba.core.datamodel
     - numba.experimental.jitclass
     - numba.np.ufunc
     - numba.pycc
-    - numba.rewrites
-    - numba.runtime
+    - numba.core.rewrites
+    - numba.core.runtime
     - numba.scripts
     - numba.roc.servicelib
     - numba.testing
     - numba.tests
     - numba.tests.npyufunc
-    - numba.typeconv
-    - numba.typing
-    - numba.unsafe
+    - numba.core.typeconv
+    - numba.core.typing
+    - numba.core.unsafe
 
 about:
   home: http://numba.github.com
