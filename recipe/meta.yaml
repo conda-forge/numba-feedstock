@@ -12,15 +12,12 @@ source:
   sha256: {{ sha256 }}
 
 build:
-  number: 0
+  number: 1
   entry_points:
     - pycc = numba.pycc:main
     - numba = numba.misc.numba_entry:main
   script:
     - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv
-  ignore_run_exports:
-    # TBB is entirely optional
-    - tbb
 
 requirements:
   build:
