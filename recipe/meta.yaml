@@ -23,6 +23,7 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    - llvm-openmp >=10.0  # [osx]
 
   host:
     - python
@@ -31,6 +32,7 @@ requirements:
     - llvmlite 0.34.0
     - numpy
     - tbb-devel >=2019.5  # [linux64 or ppc64le]
+    - llvm-openmp >=10.0  # [osx]
 
   run:
     - python
