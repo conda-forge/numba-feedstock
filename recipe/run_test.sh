@@ -15,15 +15,23 @@ else
   echo Error
 fi
 
+# On my computer, on Windows:
+# (Intel(R) Xeon(R) CPU E5-2697 v3 @ 2.60GHz * 2, 56 threads total)
+# 56: Ran 9901 tests in 1944.480s
+# 12: Ran 9901 tests in 1953.651s
+#  8: Ran 9901 tests in 2116.660s
+#  4: Ran 9901 tests in 2559.670s
+if [[ ${CPU_COUNT} > 12 ]]; then
+  TEST_NPROCS=12
+else
+  TEST_NRPOCS=${CPU_COUNT}
+fi
+
 # limit CPUs in use on PPC64LE, fork() issues
 # occur on high core count systems
-archstr=`uname -m`
+archstr=$(uname -m)
 if [[ "$archstr" == 'ppc64le' ]]; then
-    TEST_NPROCS=1
-#elif [[ "$archstr" == 'aarch64' ]]; then
-#    TEST_NPROCS=4
-else
-    TEST_NPROCS=${CPU_COUNT}
+  TEST_NPROCS=1
 fi
 
 # Check Numba executables are there

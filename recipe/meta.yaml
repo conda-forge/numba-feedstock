@@ -12,12 +12,13 @@ source:
   sha256: {{ sha256 }}
 
 build:
-  number: 1
+  number: 2
   entry_points:
     - pycc = numba.pycc:main
     - numba = numba.misc.numba_entry:main
   script:
-    - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv
+    - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv  # [not win]
+    - {{ PYTHON }} setup.py build install --single-version-externally-managed --record=record.txt  # [win]
 
 requirements:
   build:
