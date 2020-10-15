@@ -56,14 +56,17 @@ test:
     - scipy
     - ipython
     - setuptools
-    - tbb >=2018.0.5           # [linux64 or ppc64le]
+    # - tbb >=2018.0.5           # [linux64 or ppc64le]
     - intel-openmp             # [osx]
     # Need these for AOT. Do not init msvc as it may not be present
     - {{ compiler('c') }}      # [not win]
     - {{ compiler('cxx') }}    # [not win]
     # Working around an issue with NumPy 1.19
     # xref: https://github.com/numba/numba/issues/5929
-    - numpy >=1.15,<1.19
+    # TODO: Remember to uncomment tbb above when fixed
+    - numpy >=1.15,<1.19       # [py < 39]
+    - numpy
+    - tbb >=2018.0.5           # [(linux64 or ppc64le) and (py < 39)]
 
   imports:
     - numba
