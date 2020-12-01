@@ -5,9 +5,13 @@ Home: http://numba.github.com
 
 Package license: BSD-2-Clause
 
-Feedstock license: BSD-3-Clause
+Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/numba-feedstock/blob/master/LICENSE.txt)
 
 Summary: NumPy aware dynamic Python compiler using LLVM
+
+Development: https://github.com/numba/numba
+
+Documentation: http://numba.pydata.org/
 
 Numba is an Open Source NumPy-aware optimizing compiler for Python
 sponsored by Anaconda, Inc. It uses the remarkable LLVM compiler
