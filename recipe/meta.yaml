@@ -24,7 +24,7 @@ build:
     - lib/libiomp5.dylib  # [osx]
   ignore_run_exports:
     # tbb-devel triggers hard dependency on tbb, this is not the case.
-    - tbb # [not (armv6l or armv7l or aarch64 or linux32)]
+    - tbb  # [not (armv6l or armv7l or aarch64 or linux32)]
 
 requirements:
   build:
