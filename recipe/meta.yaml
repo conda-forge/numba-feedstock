@@ -18,10 +18,10 @@ build:
     - numba = numba.misc.numba_entry:main
   script:
     - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv
-  missing_dso_whitelist: # [osx]
+  missing_dso_whitelist:  # [osx]
     # optional dependency: required only when omp is chosen as the backend for
     # the threading layer
-    - lib/libiomp5.dylib # [osx]
+    - lib/libiomp5.dylib  # [osx]
   ignore_run_exports:
     # tbb-devel triggers hard dependency on tbb, this is not the case.
     - tbb # [not (armv6l or armv7l or aarch64 or linux32)]
@@ -44,7 +44,7 @@ requirements:
 
   run:
     - python
-    - llvmlite 0.35.*
+    - {{ pin_compatible('llvmlite', max_pin='x.x') }}
     - {{ pin_compatible('numpy') }}
     # needed for pkg_resources
     - setuptools
