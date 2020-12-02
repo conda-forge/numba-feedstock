@@ -18,35 +18,49 @@ build:
     - numba = numba.misc.numba_entry:main
   script:
     - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv
+  missing_dso_whitelist: # [osx]
+    # optional dependency: required only when omp is chosen as the backend for
+    # the threading layer
+    - lib/libiomp5.dylib # [osx]
   ignore_run_exports:
-    # TBB is entirely optional
-    - tbb
+    # tbb-devel triggers hard dependency on tbb, this is not the case.
+    - tbb # [not (armv6l or armv7l or aarch64 or linux32)]
 
 requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    # both of these are needed on osx, llvm for the headers, Intel for the lib
+    - llvm-openmp              # [osx]
+    - intel-openmp             # [osx]
 
   host:
     - python
     - pip
     - setuptools
-    - llvmlite 0.35.0
+    - llvmlite 0.35.*
     - numpy
-    - tbb-devel >=2019.5  # [linux64 or ppc64le]
+    - tbb-devel >=2019.5,<=2020.3  # [linux64 or ppc64le]
 
   run:
     - python
-    - llvmlite >=0.35.0,<0.36
+    - llvmlite 0.35.*
     - {{ pin_compatible('numpy') }}
     # needed for pkg_resources
     - setuptools
 
   run_constrained:
-    # If TBB is present it must be at least this version from Anaconda due to
-    # build flag issues triggering UB in defaults::tbb=2018.0.4
-    # See https://github.com/numba/numba/pull/3202#issuecomment-415939206 ff.
-    - tbb >=2019.5  # [linux64 or ppc64le]
+    # If TBB is present it must be at least version 2019.5 from Anaconda due to
+    # build flag issues triggering UB. It must also be <=2020.3 due to ABI
+    # changes in TBB, see https://github.com/numba/numba/pull/6096.
+    # 2020.3 is the last version with the "old" ABI
+    - tbb  >=2019.5,<=2020.3  # [linux64 or ppc64le]
+    # avoid confusion from openblas bugs
+    - libopenblas !=0.3.6      # [x86_64]
+    # CUDA 9.0 or later is required for CUDA support
+    - cudatoolkit >=9.0
+    # scipy 1.0 or later
+    - scipy >=1.0
 
 test:
   requires:
