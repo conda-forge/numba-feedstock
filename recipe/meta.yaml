@@ -30,9 +30,8 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    # both of these are needed on osx, llvm for the headers, Intel for the lib
+    # llvm is needed for the headers
     - llvm-openmp              # [osx]
-    - intel-openmp             # [osx]
 
   host:
     - python
