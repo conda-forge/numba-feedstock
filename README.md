@@ -5,9 +5,13 @@ Home: http://numba.github.com
 
 Package license: BSD-2-Clause
 
-Feedstock license: BSD-3-Clause
+Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/numba-feedstock/blob/master/LICENSE.txt)
 
 Summary: NumPy aware dynamic Python compiler using LLVM
+
+Development: https://github.com/numba/numba
+
+Documentation: http://numba.pydata.org/
 
 Numba is an Open Source NumPy-aware optimizing compiler for Python
 sponsored by Anaconda, Inc. It uses the remarkable LLVM compiler
@@ -127,6 +131,13 @@ Current build status
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=700&branchName=master">
                   <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/numba-feedstock?branchName=master&jobName=osx&configuration=osx_64_python3.8.____cpython" alt="variant">
+                </a>
+              </td>
+            </tr><tr>
+              <td>osx_arm64</td>
+              <td>
+                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=700&branchName=master">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/numba-feedstock?branchName=master&jobName=osx&configuration=osx_arm64_" alt="variant">
                 </a>
               </td>
             </tr><tr>

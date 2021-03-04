@@ -1,6 +1,6 @@
 {% set name = "numba" %}
-{% set version = "0.51.2" %}
-{% set sha256 = "c3385ddea40bcf2edfe405844ef9df97e23e5b8b7f635883a5e987f519e6441b" %}
+{% set version = "0.52.0" %}
+{% set sha256 = "21d7e558ee5162e1d22a4ca1794e6e99bf8a039eca885840e97707873463d1fc" %}
 
 package:
   name: numba
@@ -22,31 +22,43 @@ build:
 
 requirements:
   build:
+    - python                                 # [build_platform != target_platform]
+    - cross-python_{{ target_platform }}     # [build_platform != target_platform]
+    - numpy                                  # [build_platform != target_platform]
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    # llvm is needed for the headers
     - llvm-openmp >=10.0  # [osx]
+
 
   host:
     - python
     - pip
     - setuptools
-    - llvmlite 0.34.0
+    - llvmlite 0.35.*
     - numpy
-    - tbb-devel >=2019.5  # [linux64 or ppc64le]
+    - tbb-devel >=2019.5,<=2020.3  # [linux64 or ppc64le]
     - llvm-openmp >=10.0  # [osx]
 
   run:
     - python
-    - llvmlite >=0.34.0,<0.35
+    - {{ pin_compatible('llvmlite', max_pin='x.x') }}
     - {{ pin_compatible('numpy') }}
     # needed for pkg_resources
     - setuptools
 
   run_constrained:
-    # If TBB is present it must be at least this version from Anaconda due to
-    # build flag issues triggering UB in defaults::tbb=2018.0.4
-    # See https://github.com/numba/numba/pull/3202#issuecomment-415939206 ff.
-    - tbb >=2019.5  # [linux64 or ppc64le]
+    # If TBB is present it must be at least version 2019.5 from Anaconda due to
+    # build flag issues triggering UB. It must also be <=2020.3 due to ABI
+    # changes in TBB, see https://github.com/numba/numba/pull/6096.
+    # 2020.3 is the last version with the "old" ABI
+    - tbb  >=2019.5,<=2020.3  # [linux64 or ppc64le]
+    # avoid confusion from openblas bugs
+    - libopenblas !=0.3.6      # [x86_64]
+    # CUDA 9.0 or later is required for CUDA support
+    - cudatoolkit >=9.0
+    # scipy 1.0 or later
+    - scipy >=1.0
 
 test:
   requires:
@@ -101,8 +113,8 @@ about:
   license_file: LICENSE
   summary: NumPy aware dynamic Python compiler using LLVM
   description: |
-    Numba is an Open Source NumPy-aware optimizing compiler for Python 
-    sponsored by Anaconda, Inc. It uses the remarkable LLVM compiler 
+    Numba is an Open Source NumPy-aware optimizing compiler for Python
+    sponsored by Anaconda, Inc. It uses the remarkable LLVM compiler
     infrastructure to compile Python syntax to machine code."
   doc_url: http://numba.pydata.org/
   dev_url: https://github.com/numba/numba
