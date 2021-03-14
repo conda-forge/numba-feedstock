@@ -1,7 +1,7 @@
 About numba
 ===========
 
-Home: http://numba.github.com
+Home: http://numba.pydata.org
 
 Package license: BSD-2-Clause
 
