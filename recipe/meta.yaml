@@ -68,7 +68,7 @@ test:
     - scipy
     - ipython
     - setuptools
-    - tbb >=2018.0.5
+    - tbb >=2019.5
     - intel-openmp             # [osx]
     # Need these for AOT. Do not init msvc as it may not be present
     - {{ compiler('c') }}      # [not win]
