@@ -21,6 +21,7 @@ build:
   ignore_run_exports:
     # tbb-devel triggers hard dependency on tbb, this is not the case.
     - tbb
+  skip: True  # [python_impl == 'pypy']
 
 requirements:
   build:
@@ -107,7 +108,7 @@ test:
     - numba.tests.npyufunc
 
 about:
-  home: http://numba.github.com
+  home: http://numba.pydata.org
   license: BSD-2-Clause
   license_family: BSD
   license_file: LICENSE
