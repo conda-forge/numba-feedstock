@@ -22,9 +22,6 @@ build:
 
 requirements:
   build:
-    - python                                 # [build_platform != target_platform and not win]
-    - cross-python_{{ target_platform }}     # [build_platform != target_platform and not win]
-    - numpy                                  # [build_platform != target_platform and not win]
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     # llvm is needed for the headers
