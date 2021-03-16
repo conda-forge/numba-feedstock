@@ -1,6 +1,6 @@
 {% set name = "numba" %}
-{% set version = "0.52.0" %}
-{% set sha256 = "21d7e558ee5162e1d22a4ca1794e6e99bf8a039eca885840e97707873463d1fc" %}
+{% set version = "0.53.0" %}
+{% set sha256 = "d300d75ac776b851cb1bbfe7ebe160fb8a9626e705a05006a7b6f5670958a7af" %}
 
 package:
   name: numba
@@ -35,7 +35,7 @@ requirements:
     - python
     - pip
     - setuptools
-    - llvmlite 0.35.*
+    - llvmlite 0.36.*
     - numpy
     - tbb-devel >=2019.5,<=2020.3  # [linux64 or ppc64le]
     - llvm-openmp >=10.0  # [osx]
@@ -73,9 +73,9 @@ test:
     # Need these for AOT. Do not init msvc as it may not be present
     - {{ compiler('c') }}      # [not win]
     - {{ compiler('cxx') }}    # [not win]
-    # Working around an issue with NumPy 1.19
-    # xref: https://github.com/numba/numba/issues/5929
-    - numpy >=1.15,<1.19
+    # 10 tests fail on NumPy 1.20, 1 test fails on 1.19
+    - numpy <1.19  # [py<39]
+    - numpy <1.20  # [py>=39]
 
   imports:
     - numba
