@@ -38,7 +38,7 @@ python -m numba.tests.test_runtests
 
 if [[ "$archstr" == 'aarch64' ]]; then
 	echo 'Running only a slice of tests'
-	$SEGVCATCH python -m numba.runtests -b -j --random='0.20' --exclude-tags='long_running' -m $TEST_NPROCS -- numba.tests
+	$SEGVCATCH python -m numba.runtests -b -j --random='0.10' --exclude-tags='long_running' -m $TEST_NPROCS -- numba.tests
 # For now, skip tests on ppc64le because of known errors in the testing suite on ppc64le https://github.com/numba/numba/issues/4026
 elif [[ "$archstr" == 'ppc64le' ]]; then
 	echo 'Skipping tests on ppc64le for testing'
