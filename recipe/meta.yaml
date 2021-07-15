@@ -39,7 +39,7 @@ requirements:
     - setuptools
     - llvmlite 0.36.*
     - numpy
-    - tbb-devel >=2019.5,<=2020.3
+    - tbb-devel
 
   run:
     - python
@@ -49,11 +49,7 @@ requirements:
     - setuptools
 
   run_constrained:
-    # If TBB is present it must be at least version 2019.5 from Anaconda due to
-    # build flag issues triggering UB. It must also be <=2020.3 due to ABI
-    # changes in TBB, see https://github.com/numba/numba/pull/6096.
-    # 2020.3 is the last version with the "old" ABI
-    - tbb  >=2019.5,<=2020.3
+    - {{ pin_compatible('tbb', max_pin=None) }}
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6      # [x86_64]
     # CUDA 9.0 or later is required for CUDA support
