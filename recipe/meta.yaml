@@ -22,12 +22,13 @@ build:
     # tbb-devel triggers hard dependency on tbb, this is not the case.
     - tbb
   skip: true  # [python_impl == 'pypy']
+  skip: true  # [py<37]
 
 requirements:
   build:
     - python                                 # [build_platform != target_platform]
     - cross-python_{{ target_platform }}     # [build_platform != target_platform]
-    - numpy                                  # [build_platform != target_platform]
+    - numpy   >=1.11                         # [build_platform != target_platform]
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     # llvm is needed for the headers
@@ -37,9 +38,9 @@ requirements:
     - python
     - pip
     - setuptools
-    - llvmlite 0.36.*
-    - numpy
-    - tbb-devel >=2019.5,<=2020.3
+    - llvmlite 0.37.*
+    - numpy >=1.17
+    - tbb-devel >=2021.0
 
   run:
     - python
@@ -49,11 +50,7 @@ requirements:
     - setuptools
 
   run_constrained:
-    # If TBB is present it must be at least version 2019.5 from Anaconda due to
-    # build flag issues triggering UB. It must also be <=2020.3 due to ABI
-    # changes in TBB, see https://github.com/numba/numba/pull/6096.
-    # 2020.3 is the last version with the "old" ABI
-    - tbb  >=2019.5,<=2020.3
+    - tbb  >=2021.0
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6      # [x86_64]
     # CUDA 9.0 or later is required for CUDA support
@@ -76,7 +73,7 @@ test:
     - {{ compiler('cxx') }}    # [not win]
     # 10 tests fail on NumPy 1.20, 1 test fails on 1.19
     - numpy <1.19  # [py<39]
-    - numpy <1.20  # [py>=39]
+    - numpy <1.21  # [py>=39]
 
   imports:
     - numba
