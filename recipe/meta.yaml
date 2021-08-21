@@ -28,7 +28,7 @@ requirements:
   build:
     - python                                 # [build_platform != target_platform]
     - cross-python_{{ target_platform }}     # [build_platform != target_platform]
-    - numpy   >=1.11                         # [build_platform != target_platform]
+    - numpy >=1.11                           # [build_platform != target_platform]
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     # llvm is needed for the headers
@@ -71,9 +71,6 @@ test:
     # Need these for AOT. Do not init msvc as it may not be present
     - {{ compiler('c') }}      # [not win]
     - {{ compiler('cxx') }}    # [not win]
-    # 10 tests fail on NumPy 1.20, 1 test fails on 1.19
-    - numpy <1.19  # [py<39]
-    - numpy <1.21  # [py>=39]
 
   imports:
     - numba
