@@ -39,7 +39,7 @@ requirements:
     - pip
     - setuptools
     - llvmlite 0.37.*
-    - numpy >=1.17,<1.21
+    - numpy
     - tbb-devel >=2021.0
 
   run:
@@ -57,6 +57,8 @@ requirements:
     - cudatoolkit >=9.0
     # scipy 1.0 or later
     - scipy >=1.0
+    # numpy has a hard upper limit currently
+    - numpy >=1.17,<1.21
 
 test:
   requires:
