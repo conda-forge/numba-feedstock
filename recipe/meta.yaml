@@ -98,7 +98,6 @@ test:
     - numba.np.ufunc
     - numba.pycc
     - numba.scripts
-    - numba.roc.servicelib
     - numba.testing
     - numba.tests
     - numba.tests.npyufunc
