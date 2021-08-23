@@ -17,6 +17,7 @@ build:
     - pycc = numba.pycc:main
     - numba = numba.misc.numba_entry:main
   script:
+    - export CC="${CC} -pthread"  # [linux]
     - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv
   ignore_run_exports:
     # tbb-devel triggers hard dependency on tbb, this is not the case.
