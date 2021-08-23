@@ -1,0 +1,25 @@
+From ccd8858ec6255635a211dc68761228bbf542167c Mon Sep 17 00:00:00 2001
+From: Siu Kwan Lam <1929845+sklam@users.noreply.github.com>
+Date: Tue, 17 Aug 2021 18:02:33 -0500
+Subject: [PATCH] Fix #7302.
+
+Workaround missing pthread problem on ppc64le
+---
+ buildscripts/condarecipe.local/build.sh | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/buildscripts/condarecipe.local/build.sh b/buildscripts/condarecipe.local/build.sh
+index ae54deb464f..c7e0ff831d7 100644
+--- a/buildscripts/condarecipe.local/build.sh
++++ b/buildscripts/condarecipe.local/build.sh
+@@ -6,4 +6,10 @@ else
+     EXTRA_BUILD_EXT_FLAGS=""
+ fi
+ 
++if [[ "$(uname -s)" == *"Linux"* ]] && [[ "$(uname -p)" == *"ppc64le"* ]]; then
++    # To workaround https://github.com/numba/numba/issues/7302 
++    # because of a python build problem that the -pthread could be stripped.
++    export CC="$CC -pthread"
++fi
++
+ MACOSX_DEPLOYMENT_TARGET=10.10 $PYTHON setup.py build_ext $EXTRA_BUILD_EXT_FLAGS build install --single-version-externally-managed --record=record.txt
