@@ -10,10 +10,6 @@ source:
   # url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
   url: https://github.com/numba/{{ name }}/archive/{{ version }}.tar.gz
   sha256: {{ sha256 }}
-  patches:
-    # Apply a patch from upstream to fix the missing pthreads problem
-    # xref: https://github.com/numba/numba/pull/7312
-    - PR_7312.patch
 
 build:
   number: 0
