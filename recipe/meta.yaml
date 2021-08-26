@@ -1,6 +1,6 @@
 {% set name = "numba" %}
-{% set version = "0.53.1" %}
-{% set sha256 = "c0d5ef90eb959f919cf134512259459430c58d566ff2124535572648b3b3931d" %}
+{% set version = "0.54.0" %}
+{% set sha256 = "7de8900959076e99646a3b268f57a25dc4c6445b203b34e7276854a3ffeee0c9" %}
 
 package:
   name: numba
@@ -36,9 +36,9 @@ requirements:
     - python
     - pip
     - setuptools
-    - llvmlite 0.36.*
-    - numpy
-    - tbb-devel >=2019.5,<=2020.3
+    - llvmlite 0.37.*
+    - numpy >=1.17,<1.21
+    - tbb-devel >=2021
     - llvm-openmp >=10.0            # [osx]
 
   run:
@@ -53,11 +53,11 @@ requirements:
     # build flag issues triggering UB. It must also be <=2020.3 due to ABI
     # changes in TBB, see https://github.com/numba/numba/pull/6096.
     # 2020.3 is the last version with the "old" ABI
-    - tbb  >=2019.5,<=2020.3
+    - tbb  >=2021
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6      # [x86_64]
     # CUDA 9.0 or later is required for CUDA support
-    - cudatoolkit >=9.0
+    - cudatoolkit >=9.2
     # scipy 1.0 or later
     - scipy >=1.0
 
@@ -70,13 +70,13 @@ test:
     - ipython
     - setuptools
     - tbb >=2019.5
-    - intel-openmp             # [osx]
+    - intel-openmp             # [osx and x86_64]
     # Need these for AOT. Do not init msvc as it may not be present
     - {{ compiler('c') }}      # [not win]
     - {{ compiler('cxx') }}    # [not win]
     # 10 tests fail on NumPy 1.20, 1 test fails on 1.19
-    - numpy <1.19  # [py<39]
-    - numpy <1.20  # [py>=39]
+    - numpy <1.21  # [py<39]
+    - numpy <1.21  # [py>=39]
 
   imports:
     - numba
@@ -102,7 +102,6 @@ test:
     - numba.np.ufunc
     - numba.pycc
     - numba.scripts
-    - numba.roc.servicelib
     - numba.testing
     - numba.tests
     - numba.tests.npyufunc
