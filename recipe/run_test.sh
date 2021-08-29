@@ -9,6 +9,7 @@ export PYTHONFAULTHANDLER=1
 unamestr=`uname`
 if [[ "$unamestr" == 'Linux' ]]; then
   SEGVCATCH=catchsegv
+  export CC="${CC} -pthread"
 elif [[ "$unamestr" == 'Darwin' ]]; then
   SEGVCATCH=""
 else
