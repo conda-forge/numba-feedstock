@@ -1,6 +1,6 @@
 {% set name = "numba" %}
-{% set version = "0.54.0" %}
-{% set sha256 = "7de8900959076e99646a3b268f57a25dc4c6445b203b34e7276854a3ffeee0c9" %}
+{% set version = "0.54.1" %}
+{% set sha256 = "919b9269c253ccbc4110de736cc9e5c8abae68f452dd229734e3a25ac987a0e7" %}
 
 package:
   name: numba
@@ -17,29 +17,29 @@ build:
     - pycc = numba.pycc:main
     - numba = numba.misc.numba_entry:main
   script:
+    - export CC="${CC} -pthread"  # [linux]
     - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv
   # The conda-forge recipe claims "tbb" is really a runtime requirement, but
   # conda-build's DSO inspection process says otherwise.
-  #ignore_run_exports:
-  #  # tbb-devel triggers hard dependency on tbb, this is not the case.
-  #  - tbb
+  # ignore_run_exports:
+  #   # tbb-devel triggers hard dependency on tbb, this is not the case.
+  #   - tbb
+  skip: true  # [py<37]
 
 requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     # llvm is needed for the headers
-    - llvm-openmp >=10.0  # [osx]
-
+    - llvm-openmp              # [osx]
 
   host:
     - python
     - pip
     - setuptools
     - llvmlite 0.37.*
-    - numpy >=1.17,<1.21
-    - tbb-devel >=2021
-    - llvm-openmp >=10.0            # [osx]
+    - numpy
+    - tbb-devel >=2021.0
 
   run:
     - python
@@ -49,17 +49,15 @@ requirements:
     - setuptools
 
   run_constrained:
-    # If TBB is present it must be at least version 2019.5 from Anaconda due to
-    # build flag issues triggering UB. It must also be <=2020.3 due to ABI
-    # changes in TBB, see https://github.com/numba/numba/pull/6096.
-    # 2020.3 is the last version with the "old" ABI
-    - tbb  >=2021
+    - tbb  >=2021.0
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6      # [x86_64]
     # CUDA 9.0 or later is required for CUDA support
-    - cudatoolkit >=9.2
+    - cudatoolkit >=9.0
     # scipy 1.0 or later
     - scipy >=1.0
+    # numpy has a hard upper limit currently
+    - numpy >=1.17,<1.21
 
 test:
   requires:
@@ -69,14 +67,12 @@ test:
     - scipy
     - ipython
     - setuptools
-    - tbb >=2019.5
-    - intel-openmp             # [osx and x86_64]
+    - tbb >=2021.0
+    - llvm-openmp              # [osx]
     # Need these for AOT. Do not init msvc as it may not be present
     - {{ compiler('c') }}      # [not win]
     - {{ compiler('cxx') }}    # [not win]
-    # 10 tests fail on NumPy 1.20, 1 test fails on 1.19
-    - numpy <1.21  # [py<39]
-    - numpy <1.21  # [py>=39]
+    - python < 3.10
 
   imports:
     - numba
