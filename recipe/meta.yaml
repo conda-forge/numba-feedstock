@@ -25,6 +25,7 @@ build:
   #   # tbb-devel triggers hard dependency on tbb, this is not the case.
   #   - tbb
   skip: true  # [py<37]
+  skip: true  # [linux and s390x]
 
 requirements:
   build:
@@ -40,6 +41,7 @@ requirements:
     - llvmlite 0.37.*
     - numpy
     - tbb-devel >=2021.0
+    - _openmp_mutex            # [linux and not (ppc64le)]
 
   run:
     - python
