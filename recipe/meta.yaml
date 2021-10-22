@@ -25,7 +25,7 @@ build:
   #   # tbb-devel triggers hard dependency on tbb, this is not the case.
   #   - tbb
   skip: true  # [py<37]
-  skip: true  # [linux and s390x]
+  skip: true  # [(linux and s390x) or (osx and arm64)]
 
 requirements:
   build:
@@ -33,23 +33,21 @@ requirements:
     - {{ compiler('cxx') }}
     # llvm is needed for the headers
     - llvm-openmp              # [osx]
-
   host:
     - python
     - pip
     - setuptools
+    - wheel
     - llvmlite 0.37.*
     - numpy
     - tbb-devel >=2021.0
     - _openmp_mutex            # [linux and not (ppc64le)]
-
   run:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
     - {{ pin_compatible('numpy') }}
     # needed for pkg_resources
     - setuptools
-
   run_constrained:
     - tbb  >=2021.0
     # avoid confusion from openblas bugs
@@ -75,7 +73,9 @@ test:
     - {{ compiler('c') }}      # [not win]
     - {{ compiler('cxx') }}    # [not win]
     - python <3.10
-
+    - pip
+  commands:
+    - pip check
   imports:
     - numba
     - numba.core.annotations
