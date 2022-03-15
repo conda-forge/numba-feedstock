@@ -1,0 +1,14 @@
+diff --git a/numba/tests/test_parfors.py b/numba/tests/test_parfors.py
+index 51609b1e0..94180fe9f 100644
+--- a/numba/tests/test_parfors.py
++++ b/numba/tests/test_parfors.py
+@@ -63,7 +63,7 @@ class TestParforsRunner(TestCase):
+     _numba_parallel_test_ = False
+ 
+     # Each test class can run for 30 minutes before time out.
+-    _TIMEOUT = 1800
++    _TIMEOUT = 1800*2
+ 
+     """This is the test runner for all the parfors tests, it runs them in
+     subprocesses as described above. The convention for the test method naming
+

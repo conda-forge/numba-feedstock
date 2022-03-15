@@ -1,6 +1,6 @@
 {% set name = "numba" %}
-{% set version = "0.54.1" %}
-{% set sha256 = "919b9269c253ccbc4110de736cc9e5c8abae68f452dd229734e3a25ac987a0e7" %}
+{% set version = "0.55.1" %}
+{% set sha256 = "542a9b514031f6afae971b627930fcaec057cdb604d54db7cbddfb050c580fb9" %}
 
 package:
   name: numba
@@ -10,6 +10,8 @@ source:
   # url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
   url: https://github.com/numba/{{ name }}/archive/{{ version }}.tar.gz
   sha256: {{ sha256 }}
+  patches:
+    - patch-parfor.patch
 
 build:
   number: 0
@@ -19,13 +21,11 @@ build:
   script:
     - export CC="${CC} -pthread"  # [linux]
     - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv
-  # The conda-forge recipe claims "tbb" is really a runtime requirement, but
-  # conda-build's DSO inspection process says otherwise.
-  # ignore_run_exports:
-  #   # tbb-devel triggers hard dependency on tbb, this is not the case.
-  #   - tbb
+  ignore_run_exports:
+    # tbb-devel triggers hard dependency on tbb, this is not the case.
+    - tbb
+  skip: true  # [python_impl == 'pypy']
   skip: true  # [py<37]
-  skip: true  # [(linux and s390x) or (osx and arm64)]
 
 requirements:
   build:
@@ -33,31 +33,32 @@ requirements:
     - {{ compiler('cxx') }}
     # llvm is needed for the headers
     - llvm-openmp              # [osx]
+
   host:
     - python
     - pip
     - setuptools
-    - wheel
-    - llvmlite 0.37.*
+    - llvmlite 0.38.*
     - numpy
-    - tbb-devel >=2021.0
-    - _openmp_mutex            # [linux and not (ppc64le)]
+    - tbb-devel 2021.*
+
   run:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
     - {{ pin_compatible('numpy') }}
     # needed for pkg_resources
     - setuptools
+
   run_constrained:
     - tbb  >=2021.0
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6      # [x86_64]
-    # CUDA 9.0 or later is required for CUDA support
-    - cudatoolkit >=9.0
+    # CUDA 9.2 or later is required for CUDA support
+    - cudatoolkit >=9.2
     # scipy 1.0 or later
     - scipy >=1.0
     # numpy has a hard upper limit currently
-    - numpy >=1.17,<1.21
+    - numpy >=1.18,<1.22
 
 test:
   requires:
@@ -72,10 +73,7 @@ test:
     # Need these for AOT. Do not init msvc as it may not be present
     - {{ compiler('c') }}      # [not win]
     - {{ compiler('cxx') }}    # [not win]
-    - python <3.10
-    - pip
-  commands:
-    - pip check
+
   imports:
     - numba
     - numba.core.annotations
@@ -111,8 +109,8 @@ about:
   license_file: LICENSE
   summary: NumPy aware dynamic Python compiler using LLVM
   description: |
-    Numba is an Open Source NumPy-aware optimizing compiler for Python
-    sponsored by Anaconda, Inc. It uses the remarkable LLVM compiler
+    Numba is an Open Source NumPy-aware optimizing compiler for Python 
+    sponsored by Anaconda, Inc. It uses the remarkable LLVM compiler 
     infrastructure to compile Python syntax to machine code."
   doc_url: http://numba.pydata.org/
   dev_url: https://github.com/numba/numba
