@@ -15,6 +15,7 @@ source:
 
 build:
   number: 0
+  # touched: 1
   entry_points:
     - pycc = numba.pycc:main
     - numba = numba.misc.numba_entry:main
