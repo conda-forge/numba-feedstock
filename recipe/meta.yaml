@@ -26,7 +26,7 @@ build:
     # tbb-devel triggers hard dependency on tbb, this is not the case.
     - tbb
   skip: true  # [python_impl == 'pypy']
-  skip: true  # [py<37]
+  skip: true  # [py<37 or s390x]
 
 requirements:
   build:
@@ -49,6 +49,7 @@ requirements:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
     - {{ pin_compatible('numpy') }}
+    - {{ pin_compatible('tbb') }}
     # needed for pkg_resources
     - setuptools
 
