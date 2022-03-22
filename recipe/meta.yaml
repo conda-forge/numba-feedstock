@@ -40,6 +40,7 @@ requirements:
     - python
     - pip
     - setuptools
+    - wheel
     - llvmlite 0.38.*
     - numpy
     - tbb-devel 2021.*
@@ -56,7 +57,7 @@ requirements:
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6      # [x86_64]
     # CUDA 9.2 or later is required for CUDA support
-    - cudatoolkit >=9.2
+    - cudatoolkit >=9.2   # [x86 and (win or linux)]
     # scipy 1.0 or later
     - scipy >=1.0
     # numpy has a hard upper limit currently
@@ -70,6 +71,8 @@ test:
     - scipy
     - ipython
     - setuptools
+    - pip
+    - wheel
     - tbb >=2021.0
     - llvm-openmp              # [osx]
     # Need these for AOT. Do not init msvc as it may not be present
