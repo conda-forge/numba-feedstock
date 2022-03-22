@@ -22,9 +22,9 @@ build:
   script:
     - export CC="${CC} -pthread"  # [linux]
     - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv
-  ignore_run_exports:
-    # tbb-devel triggers hard dependency on tbb, this is not the case.
-    - tbb
+  # ignore_run_exports:
+  #  # tbb-devel triggers hard dependency on tbb, this is not the case.
+  #  - tbb
   skip: true  # [python_impl == 'pypy']
   skip: true  # [py<37 or s390x]
 
@@ -44,12 +44,11 @@ requirements:
     - llvmlite 0.38.*
     - numpy
     - tbb-devel 2021.*
-
+    - _openmp_mutex            # [linux and not ppc64le]
   run:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
     - {{ pin_compatible('numpy') }}
-    - {{ pin_compatible('tbb') }}
     # needed for pkg_resources
     - setuptools
 
@@ -58,7 +57,8 @@ requirements:
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6      # [x86_64]
     # CUDA 9.2 or later is required for CUDA support
-    - cudatoolkit >=9.2   # [x86 and (win or linux)]
+    - cudatoolkit >=9.2   # [x86 and not osx]
+    - cudatoolkit >=9.0   # [x86 and osx]
     # scipy 1.0 or later
     - scipy >=1.0
     # numpy has a hard upper limit currently
