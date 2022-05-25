@@ -1,6 +1,6 @@
 {% set name = "numba" %}
-{% set version = "0.55.1" %}
-{% set sha256 = "542a9b514031f6afae971b627930fcaec057cdb604d54db7cbddfb050c580fb9" %}
+{% set version = "0.55.2" %}
+{% set sha256 = "1b44f7c193e838eb14a16ab8423df7b60a5ddad5b250e779fd5ab1c7c42e9355" %}
 
 package:
   name: numba
@@ -14,7 +14,7 @@ source:
     - patch-parfor.patch
 
 build:
-  number: 1
+  number: 0
   entry_points:
     - pycc = numba.pycc:main
     - numba = numba.misc.numba_entry:main
