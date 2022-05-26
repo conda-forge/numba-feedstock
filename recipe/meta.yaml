@@ -54,18 +54,22 @@ requirements:
     - setuptools
 
   run_constrained:
-    - tbb  >=2021.0
+    - tbb  2021.*  # [not (armv6l or armv7l or aarch64 or linux32 or ppc64le)]
     # avoid confusion from openblas bugs
-    - libopenblas !=0.3.6      # [x86_64]
+    - libopenblas !=0.3.6  # [x86_64]
+    - libopenblas >=0.3.18, !=0.3.20 # [arm64]
     # CUDA 9.2 or later is required for CUDA support
     - cudatoolkit >=9.2
     # scipy 1.0 or later
     - scipy >=1.0
-    # numpy has a hard upper limit currently
-    - numpy >=1.18,<1.22
+    # numpy has a hard upper limit
+    - numpy >=1.18,<1.23
+    # CUDA Python 11.6 or later
+    - cuda-python >=11.6
 
 test:
   requires:
+    - pip
     # Required to test optional Numba features
     - jinja2
     - cffi
@@ -105,6 +109,9 @@ test:
     - numba.testing
     - numba.tests
     - numba.tests.npyufunc
+    
+  commands:
+    - pip check
 
 about:
   home: http://numba.pydata.org
