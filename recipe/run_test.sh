@@ -10,7 +10,6 @@ unamestr=`uname`
 if [[ "$unamestr" == 'Linux' ]]; then
   SEGVCATCH=catchsegv
   export CC="${CC} -pthread"
-  export NPY_DISABLE_CPU_FEATURES="AVX512_SKX"
 elif [[ "$unamestr" == 'Darwin' ]]; then
   SEGVCATCH=""
 else
@@ -26,6 +25,20 @@ elif [[ "$archstr" == 'aarch64' ]]; then
     TEST_NPROCS=4
 else
     TEST_NPROCS=${CPU_COUNT}
+fi
+
+# Disable NumPy dispatching to AVX512_SKX feature extensions if the chip is
+# reported to support the feature and NumPy >= 1.22 as this results in the use
+# of low accuracy SVML libm replacements in ufunc loops.
+_NPY_CMD='from numba.misc import numba_sysinfo;\
+          sysinfo=numba_sysinfo.get_sysinfo();\
+          print(sysinfo["NumPy AVX512_SKX detected"] and
+                sysinfo["NumPy Version"]>="1.22")'
+NUMPY_DETECTS_AVX512_SKX_NP_GT_122=$(python -c "$_NPY_CMD")
+echo "NumPy >= 1.22 with AVX512_SKX detected: $NUMPY_DETECTS_AVX512_SKX_NP_GT_122"
+
+if [[ "$NUMPY_DETECTS_AVX512_SKX_NP_GT_122" == "True" ]]; then
+    export NPY_DISABLE_CPU_FEATURES="AVX512_SKX"
 fi
 
 # Check Numba executables are there
