@@ -63,7 +63,7 @@ requirements:
     # scipy 1.0 or later
     - scipy >=1.0
     # numpy has a hard upper limit
-    - numpy >=1.18,<1.22
+    - numpy >=1.18,<1.23
     # CUDA Python 11.6 or later
     - cuda-python >=11.6
 
