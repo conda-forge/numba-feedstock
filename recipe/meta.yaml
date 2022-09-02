@@ -1,6 +1,6 @@
 {% set name = "numba" %}
-{% set version = "0.55.2" %}
-{% set sha256 = "1b44f7c193e838eb14a16ab8423df7b60a5ddad5b250e779fd5ab1c7c42e9355" %}
+{% set version = "0.56.2" %}
+{% set sha256 = "26d78287b6c79eca299f2b87332803d46fc441e83c86103dd3cc515a650413f9" %}
 
 package:
   name: numba
@@ -109,7 +109,7 @@ test:
     - numba.testing
     - numba.tests
     - numba.tests.npyufunc
-    
+
   commands:
     - pip check
 
