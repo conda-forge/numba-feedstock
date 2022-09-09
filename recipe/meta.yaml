@@ -36,7 +36,7 @@ requirements:
     - pip
     - setuptools <60
     - wheel
-    - llvmlite 0.38.*
+    - llvmlite 0.39.*
     - numpy
     - tbb-devel 2021.*
     - _openmp_mutex            # [linux and not ppc64le]
