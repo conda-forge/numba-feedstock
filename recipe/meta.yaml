@@ -1,6 +1,6 @@
 {% set name = "numba" %}
-{% set version = "0.55.1" %}
-{% set sha256 = "542a9b514031f6afae971b627930fcaec057cdb604d54db7cbddfb050c580fb9" %}
+{% set version = "0.56.2" %}
+{% set sha256 = "26d78287b6c79eca299f2b87332803d46fc441e83c86103dd3cc515a650413f9" %}
 
 package:
   name: numba
@@ -39,7 +39,7 @@ requirements:
   host:
     - python
     - pip
-    - setuptools
+    - setuptools <60
     - wheel
     - llvmlite 0.38.*
     - numpy
