@@ -106,7 +106,7 @@ test:
     - numba.tests.npyufunc
 
 about:
-  home: http://numba.pydata.org
+  home: https://numba.pydata.org
   license: BSD-2-Clause
   license_family: BSD
   license_file: LICENSE
@@ -115,7 +115,7 @@ about:
     Numba is an Open Source NumPy-aware optimizing compiler for Python 
     sponsored by Anaconda, Inc. It uses the remarkable LLVM compiler 
     infrastructure to compile Python syntax to machine code."
-  doc_url: http://numba.pydata.org/
+  doc_url: https://numba.pydata.org/
   dev_url: https://github.com/numba/numba
 
 extra:
