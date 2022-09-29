@@ -12,7 +12,7 @@ source:
   sha256: {{ sha256 }}
 
 build:
-  number: 0
+  number: 1
   entry_points:
     - pycc = numba.pycc:main
     - numba = numba.misc.numba_entry:main
@@ -39,7 +39,7 @@ requirements:
   host:
     - python
     - pip
-    - setuptools
+    - setuptools <60
     - llvmlite 0.39.*
     - numpy
     - tbb-devel 2021.*,<2021.6
@@ -50,7 +50,7 @@ requirements:
     - {{ pin_compatible('numpy') }}
     - importlib-metadata  # [py < 39]
     # needed for pkg_resources
-    - setuptools
+    - setuptools <60
 
   run_constrained:
     - tbb  2021.*  # [not (armv6l or armv7l or aarch64 or linux32 or ppc64le)]
