@@ -111,9 +111,6 @@ test:
     - numba.tests
     - numba.tests.npyufunc
 
-  commands:
-    - pip check
-
 about:
   home: http://numba.pydata.org
   license: BSD-2-Clause
