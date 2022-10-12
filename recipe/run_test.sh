@@ -16,7 +16,7 @@ else
   echo Error
 fi
 
-# limit CPUs in use on PPC64LE, fork() issues
+# limit CPUs in use on PPC64LE and AARCH64, fork() issues
 # occur on high core count systems
 archstr=`uname -m`
 if [[ "$archstr" == 'ppc64le' ]]; then
@@ -37,12 +37,9 @@ numba -s
 # Check test discovery works
 python -m numba.tests.test_runtests
 
-if [[ "$archstr" == 'aarch64' ]]; then
+if [[ "$archstr" == 'aarch64' ]] || [[ "$archstr" == "ppc64le" ]]; then
 	echo 'Running only a slice of tests'
-	$SEGVCATCH python -m numba.runtests -b -j --random='0.15' --exclude-tags='long_running' -m $TEST_NPROCS -- numba.tests
-# For now, skip tests on ppc64le because of known errors in the testing suite on ppc64le https://github.com/numba/numba/issues/4026
-elif [[ "$archstr" == 'ppc64le' ]]; then
-	echo 'Skipping tests on ppc64le for testing'
+	$SEGVCATCH python -m numba.runtests -b -j --random='0.15' --exclude-tags='long_running' -m $TEST_NPROCS -- numba.tests || true
 # Else run the whole test suite
 else
 	echo 'Running all the tests except long_running'
