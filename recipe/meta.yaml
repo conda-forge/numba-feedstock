@@ -1,6 +1,6 @@
 {% set name = "numba" %}
 {% set version = "0.56.2" %}
-{% set sha256 = "26d78287b6c79eca299f2b87332803d46fc441e83c86103dd3cc515a650413f9" %}
+{% set sha256 = "6535ed268ca56e59faf658dd7da9b429bf279ea3296ee65016ae211fd45a05a1" %}
 
 package:
   name: numba
@@ -12,12 +12,12 @@ source:
 
 build:
   number: 0
-  # touched: 1
   entry_points:
     - pycc = numba.pycc:main
     - numba = numba.misc.numba_entry:main
   script:
     - export CC="${CC} -pthread"  # [linux]
+    - export CXX="${CXX} -pthread"  # [linux]
     - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv
   # ignore_run_exports:
   #  # tbb-devel triggers hard dependency on tbb, this is not the case.
@@ -31,6 +31,7 @@ requirements:
     - {{ compiler('cxx') }}
     # llvm is needed for the headers
     - llvm-openmp              # [osx]
+
   host:
     - python
     - pip
@@ -38,9 +39,10 @@ requirements:
     - wheel
     - llvmlite 0.39.*
     - numpy
-    - tbb-devel 2021.*
+    - tbb-devel 2021.*,<2021.6
     - _openmp_mutex            # [linux and not ppc64le]
     - importlib_metadata       # [py<39]
+
   run:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
@@ -53,13 +55,17 @@ requirements:
     - tbb  >=2021.0
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6      # [x86_64]
-    # CUDA 9.2 or later is required for CUDA support
-    - cudatoolkit >=9.2   # [x86 and not osx]
-    - cudatoolkit >=9.0   # [x86 and osx]
+    - libopenblas >=0.3.18, !=0.3.20  # [arm64]
+    # CUDA 10.2 or later is required for CUDA support
+    - cudatoolkit >=10.2
     # scipy 1.0 or later
     - scipy >=1.0
-    # numpy has a hard upper limit currently
-    - numpy >=1.18,<1.22
+    # NumPy has a hard upper limit.
+    # Also NumPy 1.22.0, 1.22.1, 1.22.2 are all broken for ufuncs
+    # xref: https://github.com/numba/numba/issues/7756
+    - numpy >=1.18,!=1.22.0,!=1.22.1,!=1.22.2,<1.24
+    # CUDA Python 11.6 or later
+    - cuda-python >=11.6
 
 test:
   requires:
