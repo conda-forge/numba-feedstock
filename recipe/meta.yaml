@@ -42,7 +42,7 @@ requirements:
     - llvmlite 0.39.*
     - numpy
     - tbb-devel 2021.*,<2021.6
-    - _openmp_mutex            # [linux and not ppc64le]
+    - _openmp_mutex            # [linux]
     - importlib_metadata       # [py<39]
 
   run:
