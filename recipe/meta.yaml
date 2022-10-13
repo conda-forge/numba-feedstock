@@ -9,6 +9,8 @@ package:
 source:
   url: https://github.com/numba/{{ name }}/archive/{{ version }}.tar.gz
   sha256: {{ sha256 }}
+  patches:
+    - patch-setuptools-60.patch
 
 build:
   number: 0
@@ -35,7 +37,7 @@ requirements:
   host:
     - python
     - pip
-    - setuptools <60
+    - setuptools
     - wheel
     - llvmlite 0.39.*
     - numpy
