@@ -47,9 +47,12 @@ requirements:
 
   run:
     - python
-    - {{ pin_compatible('llvmlite', max_pin='x.x') }}
-    - {{ pin_compatible('numpy') }}
     - importlib_metadata       # [py<39]
+    - llvmlite >=0.39.*,<1
+    # NumPy has a hard upper limit.
+    # NumPy 1.22.0, 1.22.1, 1.22.2 are all broken for ufuncs
+    # xref: https://github.com/numba/numba/issues/7756
+    - numpy >=1.18,!=1.22.0,!=1.22.1,!=1.22.2,<1.24
     # needed for pkg_resources
     - setuptools
 
@@ -62,10 +65,6 @@ requirements:
     - cudatoolkit >=10.2
     # scipy 1.0 or later
     - scipy >=1.0
-    # NumPy has a hard upper limit.
-    # Also NumPy 1.22.0, 1.22.1, 1.22.2 are all broken for ufuncs
-    # xref: https://github.com/numba/numba/issues/7756
-    - numpy >=1.18,!=1.22.0,!=1.22.1,!=1.22.2,<1.24
     # CUDA Python 11.6 or later
     - cuda-python >=11.6
 
