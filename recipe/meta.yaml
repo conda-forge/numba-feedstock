@@ -9,8 +9,6 @@ package:
 source:
   url: https://github.com/numba/{{ name }}/archive/{{ version }}.tar.gz
   sha256: {{ sha256 }}
-  patches:
-    - patch-setuptools-60.patch
 
 build:
   number: 0
@@ -33,8 +31,6 @@ requirements:
     - {{ compiler('cxx') }}
     # llvm is needed for the headers
     - llvm-openmp              # [osx]
-    - patch     # [not win]
-    - m2-patch  # [win]
 
   host:
     - python
