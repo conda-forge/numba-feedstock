@@ -54,7 +54,9 @@ requirements:
     # NumPy has a hard upper limit.
     # NumPy 1.22.0, 1.22.1, 1.22.2 are all broken for ufuncs
     # xref: https://github.com/numba/numba/issues/7756
-    - numpy >=1.18,!=1.22.0,!=1.22.1,!=1.22.2,<1.24
+    # NumPy >=1.23 breaks with CUDA test: test_reinterpret_array_type
+    # xref: https://github.com/numba/numba/issues/8529
+    - numpy >=1.18,!=1.22.0,!=1.22.1,!=1.22.2,<1.23
     # needed for pkg_resources
     - setuptools
 
