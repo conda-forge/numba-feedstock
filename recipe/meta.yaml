@@ -35,7 +35,7 @@ requirements:
   host:
     - python
     - pip
-    - setuptools <60
+    - setuptools
     - wheel
     - llvmlite 0.39.*
     - numpy
@@ -54,7 +54,7 @@ requirements:
     # xref: https://github.com/numba/numba/issues/8529
     - numpy >=1.18,!=1.22.0,!=1.22.1,!=1.22.2,<1.23
     # needed for pkg_resources
-    - setuptools <60
+    - setuptools
 
   run_constrained:
     - tbb  >=2021.0
@@ -75,7 +75,7 @@ test:
     - cffi
     - scipy
     - ipython
-    - setuptools <60
+    - setuptools
     - pip
     - wheel
     - tbb >=2021.0
