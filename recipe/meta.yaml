@@ -46,7 +46,7 @@ requirements:
   run:
     - python
     - importlib_metadata       # [py<39]
-    - llvmlite >=0.39.*,<1
+    - llvmlite >=0.39.*,<0.40
     # NumPy has a hard upper limit.
     # NumPy 1.22.0, 1.22.1, 1.22.2 are all broken for ufuncs
     # xref: https://github.com/numba/numba/issues/7756
