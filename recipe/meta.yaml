@@ -57,7 +57,7 @@ requirements:
     - setuptools
 
   run_constrained:
-    - tbb  >=2021.0
+    - tbb >=2021.0, <2022
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6      # [x86_64]
     - libopenblas >=0.3.18, !=0.3.20  # [arm64]
@@ -81,7 +81,7 @@ test:
     - setuptools
     - pip
     - wheel
-    - tbb >=2021.0
+    - tbb >=2021.0, <2022
     - llvm-openmp              # [osx]
     # Need these for AOT. Do not init msvc as it may not be present
     - {{ compiler('c') }}      # [not win]
