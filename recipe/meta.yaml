@@ -1,6 +1,10 @@
 {% set name = "numba" %}
 {% set version = "0.56.3" %}
 {% set sha256 = "8c8957219e0356cc82d366fcde13a797c329c0fc8ed4c13fdf748265922a28d5" %}
+{% set numpy_min_ver = "1.18" %}  # [py<39 and not (aarch64 or s390x or arm64)]
+{% set numpy_min_ver = "1.19" %}  # [py<39 and (aarch64 or s390x or arm64)]
+{% set numpy_min_ver = "1.19" %}  # [py==39 and not arm64]
+{% set numpy_min_ver = "1.21" %}  # [(py==39 and arm64) or py>=310]
 
 package:
   name: numba
@@ -38,7 +42,7 @@ requirements:
     - setuptools
     - wheel
     - llvmlite 0.39.*
-    - numpy >=1.18,!=1.22.0,!=1.22.1,!=1.22.2,<1.23
+    - numpy {{ numpy_min_ver }}
     - tbb-devel 2021.*,<2021.6
     - _openmp_mutex            # [linux]
     - importlib_metadata       # [py<39]
@@ -52,7 +56,7 @@ requirements:
     # xref: https://github.com/numba/numba/issues/7756
     # NumPy >=1.23 breaks with CUDA test: test_reinterpret_array_type
     # xref: https://github.com/numba/numba/issues/8529
-    - numpy >=1.18,!=1.22.0,!=1.22.1,!=1.22.2,<1.23
+    - numpy >={{ numpy_min_ver }},!=1.22.0,!=1.22.1,!=1.22.2,<1.23
     # needed for pkg_resources
     - setuptools
 
