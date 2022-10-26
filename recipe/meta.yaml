@@ -4,7 +4,7 @@
 {% set numpy_min_ver = "1.18" %}  # [py<39 and not (aarch64 or s390x or arm64)]
 {% set numpy_min_ver = "1.19" %}  # [py<39 and (aarch64 or s390x or arm64)]
 {% set numpy_min_ver = "1.19" %}  # [py==39 and not arm64]
-{% set numpy_min_ver = "1.21" %}  # [(py==39 and arm64) or py>=310]
+{% set numpy_min_ver = "1.21" %}  # [(py==39 and arm64) or py==310]
 
 package:
   name: numba
