@@ -1,0 +1,13 @@
+diff --git a/numba/tests/test_import.py b/numba/tests/test_import.py
+index 6f1c931df..499d51f34 100644
+--- a/numba/tests/test_import.py
++++ b/numba/tests/test_import.py
+@@ -99,7 +99,7 @@ class TestNumbaImport(TestCase):
+         code = "import numba"
+         # See: https://github.com/numba/numba/issues/6831
+         # bug in setuptools/packaging causing a deprecation warning
+-        flags = ["-Werror", "-Wignore::DeprecationWarning:packaging.version:"]
++        flags = ["-Werror", "-Wignore::DeprecationWarning::"]
+         run_in_subprocess(code, flags)
+ 
+     def test_import_star(self):

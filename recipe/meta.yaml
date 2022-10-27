@@ -13,6 +13,9 @@ package:
 source:
   url: https://github.com/numba/{{ name }}/archive/{{ version }}.tar.gz
   sha256: {{ sha256 }}
+  patches:
+    - patches/ignore_deprecation_warning_in_import_test.patch  # [py==310 and win]
+    # This forces a benign DeprecationWarning in test_import.py to be ignored.
 
 build:
   number: 0
@@ -35,6 +38,7 @@ requirements:
     - {{ compiler('cxx') }}
     # llvm is needed for the headers
     - llvm-openmp              # [osx]
+    - m2-patch  # [py==310 and win]
 
   host:
     - python
