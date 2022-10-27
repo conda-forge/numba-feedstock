@@ -15,3 +15,6 @@ python -m numba.tests.test_runtests
 python -m numba.runtests -m %CPU_COUNT% -b
 
 if errorlevel 1 exit 1
+
+python -m pip check
+if errorlevel 1 exit 1

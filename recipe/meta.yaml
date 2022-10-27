@@ -1,26 +1,30 @@
 {% set name = "numba" %}
-{% set version = "0.55.1" %}
-{% set sha256 = "542a9b514031f6afae971b627930fcaec057cdb604d54db7cbddfb050c580fb9" %}
+{% set version = "0.56.3" %}
+{% set sha256 = "8c8957219e0356cc82d366fcde13a797c329c0fc8ed4c13fdf748265922a28d5" %}
+{% set numpy_min_ver = "1.18" %}  # [py<39 and not (aarch64 or s390x or arm64)]
+{% set numpy_min_ver = "1.19" %}  # [py<39 and (aarch64 or s390x or arm64)]
+{% set numpy_min_ver = "1.19" %}  # [py==39 and not arm64]
+{% set numpy_min_ver = "1.21" %}  # [(py==39 and arm64) or py==310]
 
 package:
   name: numba
   version: {{ version }}
 
 source:
-  # url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
   url: https://github.com/numba/{{ name }}/archive/{{ version }}.tar.gz
   sha256: {{ sha256 }}
   patches:
-    - patch-parfor.patch
+    - patches/ignore_deprecation_warning_in_import_test.patch  # [py==310 and win]
+    # This forces a benign DeprecationWarning in test_import.py to be ignored.
 
 build:
   number: 0
-  # touched: 1
   entry_points:
     - pycc = numba.pycc:main
     - numba = numba.misc.numba_entry:main
   script:
     - export CC="${CC} -pthread"  # [linux]
+    - export CXX="${CXX} -pthread"  # [linux]
     - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv
   # ignore_run_exports:
   #  # tbb-devel triggers hard dependency on tbb, this is not the case.
@@ -34,35 +38,43 @@ requirements:
     - {{ compiler('cxx') }}
     # llvm is needed for the headers
     - llvm-openmp              # [osx]
-    - patch     # [not win]
-    - m2-patch  # [win]
+    - m2-patch  # [py==310 and win]
+
   host:
     - python
     - pip
     - setuptools
     - wheel
-    - llvmlite 0.38.*
-    - numpy
-    - tbb-devel 2021.*
-    - _openmp_mutex            # [linux and not ppc64le]
+    - llvmlite 0.39.*
+    - numpy {{ numpy_min_ver }}
+    - tbb-devel 2021.*,<2021.6
+    - _openmp_mutex            # [linux]
+    - importlib_metadata       # [py<39]
+
   run:
     - python
-    - {{ pin_compatible('llvmlite', max_pin='x.x') }}
-    - {{ pin_compatible('numpy') }}
+    - importlib_metadata       # [py<39]
+    - llvmlite >=0.39.*,<0.40
+    # NumPy has a hard upper limit.
+    # NumPy 1.22.0, 1.22.1, 1.22.2 are all broken for ufuncs
+    # xref: https://github.com/numba/numba/issues/7756
+    # NumPy >=1.23 breaks with CUDA test: test_reinterpret_array_type
+    # xref: https://github.com/numba/numba/issues/8529
+    - numpy >={{ numpy_min_ver }},!=1.22.0,!=1.22.1,!=1.22.2,<1.23
     # needed for pkg_resources
     - setuptools
 
   run_constrained:
-    - tbb  >=2021.0
+    - tbb >=2021.0, <2022
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6      # [x86_64]
-    # CUDA 9.2 or later is required for CUDA support
-    - cudatoolkit >=9.2   # [x86 and not osx]
-    - cudatoolkit >=9.0   # [x86 and osx]
+    - libopenblas >=0.3.18, !=0.3.20  # [arm64]
+    # CUDA 10.2 or later is required for CUDA support
+    - cudatoolkit >=10.2
     # scipy 1.0 or later
     - scipy >=1.0
-    # numpy has a hard upper limit currently
-    - numpy >=1.18,<1.22
+    # CUDA Python 11.6 or later
+    - cuda-python >=11.6
 
 test:
   requires:
@@ -71,10 +83,13 @@ test:
     - cffi
     - scipy
     - ipython
+    - ipykernel
+    - pygments
+    - pexpect
     - setuptools
     - pip
     - wheel
-    - tbb >=2021.0
+    - tbb >=2021.0, <2022
     - llvm-openmp              # [osx]
     # Need these for AOT. Do not init msvc as it may not be present
     - {{ compiler('c') }}      # [not win]
@@ -109,17 +124,19 @@ test:
     - numba.tests.npyufunc
 
 about:
-  home: http://numba.pydata.org
+  home: https://numba.pydata.org
   license: BSD-2-Clause
   license_family: BSD
   license_file: LICENSE
+  license_url: https://github.com/numba/numba/blob/{{ version }}/LICENSE
   summary: NumPy aware dynamic Python compiler using LLVM
   description: |
     Numba is an Open Source NumPy-aware optimizing compiler for Python 
     sponsored by Anaconda, Inc. It uses the remarkable LLVM compiler 
     infrastructure to compile Python syntax to machine code."
-  doc_url: http://numba.pydata.org/
   dev_url: https://github.com/numba/numba
+  doc_url: https://numba.pydata.org/
+  doc_source_url: https://github.com/numba/numba/tree/{{ version }}/docs
 
 extra:
   recipe-maintainers:
