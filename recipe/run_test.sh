@@ -62,7 +62,7 @@ if [[ "$archstr" == 'aarch64' ]] || [[ "$archstr" == "ppc64le" ]]; then
   # Run tests verbosely to avoid Travis CI from killing it early
   if [[ "$archstr" == "ppc64le" ]]; then
     runtests+=(-v)
-    runtests+=(-j --random='0.15')
+    runtests+=(-j --random='0.125')
   else
     runtests+=(-j --random='0.5')
   fi
