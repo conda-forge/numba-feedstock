@@ -71,6 +71,9 @@ else
 fi
 
 echo "Running: ${runtests[*]}"
-"${runtests[@]}"
+# Oddly enough, Travis CI seems to buffer stderr output more than stdout;
+# So, to avoid early job terminations, redirect stderr to unbuffered stdout
+PYTHONUNBUFFERED=1 2>&1 \
+  "${runtests[@]}"
 
 pip check
