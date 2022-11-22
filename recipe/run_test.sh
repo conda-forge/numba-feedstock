@@ -60,8 +60,8 @@ python -m numba.tests.test_runtests
 if [[ "$archstr" == 'aarch64' ]] || [[ "$archstr" == "ppc64le" ]]; then
   echo 'Running only a slice of tests'
   # Run tests verbosely to avoid Travis CI from killing it early
+  runtests+=(-v)
   if [[ "$archstr" == "ppc64le" ]]; then
-    runtests+=(-v)
     runtests+=(-j --random='0.125')
   else
     runtests+=(-j --random='0.5')
