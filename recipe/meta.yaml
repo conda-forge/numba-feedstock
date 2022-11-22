@@ -52,7 +52,7 @@ requirements:
     - setuptools
 
   run_constrained:
-    - tbb  2021.*  # [not (armv6l or armv7l or aarch64 or linux32 or ppc64le)]
+    - {{ pin_compatible('tbb-devel', min_pin='x', max_pin='x') | replace('-devel', '') }}  # [not (armv6l or armv7l or aarch64 or linux32 or ppc64le)]
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6  # [x86_64]
     - libopenblas >=0.3.18, !=0.3.20  # [arm64]
@@ -76,7 +76,7 @@ test:
     - scipy
     - ipython
     - setuptools
-    - tbb >=2021.0
+    - {{ pin_compatible('tbb-devel', min_pin='x', max_pin='x') | replace('-devel', '') }}
     # Need these for AOT. Do not init msvc as it may not be present
     - {{ compiler('c') }}      # [not win]
     - {{ compiler('cxx') }}    # [not win]
