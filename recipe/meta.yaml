@@ -12,7 +12,7 @@ source:
   sha256: {{ sha256 }}
 
 build:
-  number: 0
+  number: 1
   entry_points:
     - pycc = numba.pycc:main
     - numba = numba.misc.numba_entry:main
@@ -24,7 +24,6 @@ build:
     # tbb-devel triggers hard dependency on tbb, this is not the case.
     - tbb
   skip: true  # [python_impl == 'pypy']
-  skip: true  # [py<37]
 
 requirements:
   build:
@@ -53,7 +52,7 @@ requirements:
     - setuptools
 
   run_constrained:
-    - tbb  2021.*  # [not (armv6l or armv7l or aarch64 or linux32 or ppc64le)]
+    - {{ pin_compatible('tbb-devel', min_pin='x', max_pin='x') | replace('-devel', '') }}
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6  # [x86_64]
     - libopenblas >=0.3.18, !=0.3.20  # [arm64]
@@ -77,8 +76,7 @@ test:
     - scipy
     - ipython
     - setuptools
-    - tbb >=2021.0
-    - llvm-openmp              # [osx]
+    - {{ pin_compatible('tbb-devel', min_pin='x', max_pin='x') | replace('-devel', '') }}
     # Need these for AOT. Do not init msvc as it may not be present
     - {{ compiler('c') }}      # [not win]
     - {{ compiler('cxx') }}    # [not win]

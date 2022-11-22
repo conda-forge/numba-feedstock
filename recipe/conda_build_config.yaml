@@ -1,2 +1,0 @@
-docker_image:                                   # [os.environ.get("BUILD_PLATFORM", "").startswith("linux-")]
-  - quay.io/condaforge/linux-anvil-comp7        # [os.environ.get("BUILD_PLATFORM") == "linux-64"]
