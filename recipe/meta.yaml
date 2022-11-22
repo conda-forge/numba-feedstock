@@ -52,7 +52,7 @@ requirements:
     - setuptools
 
   run_constrained:
-    - {{ pin_compatible('tbb-devel', min_pin='x', max_pin='x') | replace('-devel', '') }}  # [not (armv6l or armv7l or aarch64 or linux32 or ppc64le)]
+    - {{ pin_compatible('tbb-devel', min_pin='x', max_pin='x') | replace('-devel', '') }}
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6  # [x86_64]
     - libopenblas >=0.3.18, !=0.3.20  # [arm64]
