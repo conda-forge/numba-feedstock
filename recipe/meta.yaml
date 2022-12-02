@@ -1,6 +1,6 @@
 {% set name = "numba" %}
-{% set version = "0.56.3" %}
-{% set sha256 = "8c8957219e0356cc82d366fcde13a797c329c0fc8ed4c13fdf748265922a28d5" %}
+{% set version = "0.56.4" %}
+{% set sha256 = "ab96b731fb9dee12b404b42b7c1fb82c119352648906a80526afa73658895b73" %}
 {% set numpy_min_ver = "1.18" %}  # [py<39 and not (aarch64 or s390x or arm64)]
 {% set numpy_min_ver = "1.19" %}  # [py<39 and (aarch64 or s390x or arm64)]
 {% set numpy_min_ver = "1.19" %}  # [py==39 and not arm64]
