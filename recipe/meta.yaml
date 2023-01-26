@@ -10,9 +10,11 @@ source:
   # url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
   url: https://github.com/numba/{{ name }}/archive/{{ version }}.tar.gz
   sha256: {{ sha256 }}
+  patches:
+    - remove_tbb_constraints.patch
 
 build:
-  number: 0
+  number: 1
   entry_points:
     - pycc = numba.pycc:main
     - numba = numba.misc.numba_entry:main
@@ -42,7 +44,7 @@ requirements:
     - setuptools
     - llvmlite 0.39.*
     - numpy
-    - tbb-devel 2021.*,<2021.6
+    - tbb-devel 2021.*
 
   run:
     - python
