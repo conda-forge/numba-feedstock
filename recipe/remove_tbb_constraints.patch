@@ -1,0 +1,96 @@
+diff --git a/buildscripts/condarecipe.local/meta.yaml b/buildscripts/condarecipe.local/meta.yaml
+index f3b8e26..34b9288 100644
+--- a/buildscripts/condarecipe.local/meta.yaml
++++ b/buildscripts/condarecipe.local/meta.yaml
+@@ -40,7 +40,7 @@ requirements:
+     # NOTE: 2021.1..2021.5 are API compatible for Numba's purposes.
+     # NOTE: ppc64le exclusion is temporary until packages are more generally
+     #       available.
+-    - tbb-devel >=2021,<2021.6       # [not (armv6l or armv7l or aarch64 or linux32 or ppc64le)]
++    - tbb-devel >=2021       # [not (armv6l or armv7l or aarch64 or linux32 or ppc64le)]
+   run:
+     - python >=3.7
+     # NumPy 1.22.0, 1.22.1, 1.22.2 are all broken for ufuncs, see #7756
+diff --git a/docs/source/user/installing.rst b/docs/source/user/installing.rst
+index d42ff7a..4d5b054 100644
+--- a/docs/source/user/installing.rst
++++ b/docs/source/user/installing.rst
+@@ -214,7 +214,7 @@ vary with target operating system and hardware. The following lists them all
+   * ``llvm-openmp`` (OSX) - provides headers for compiling OpenMP support into
+     Numba's threading backend
+   * ``tbb-devel`` - provides TBB headers/libraries for compiling TBB support
+-    into Numba's threading backend (2021 <= version < 2021.6 required).
++    into Numba's threading backend (version >= 2021 required).
+   * ``importlib_metadata`` (for Python versions < 3.9)
+ 
+ * Optional runtime are:
+diff --git a/numba/np/ufunc/tbbpool.cpp b/numba/np/ufunc/tbbpool.cpp
+index 6a61717..e975196 100644
+--- a/numba/np/ufunc/tbbpool.cpp
++++ b/numba/np/ufunc/tbbpool.cpp
+@@ -12,6 +12,7 @@ Implement parallel vectorize workqueue on top of Intel TBB.
+ #undef _XOPEN_SOURCE
+ #endif
+ 
++#include <tbb/version.h>
+ #include <tbb/tbb.h>
+ #include <string.h>
+ #include <stdio.h>
+@@ -27,10 +28,28 @@ Implement parallel vectorize workqueue on top of Intel TBB.
+  * from here:
+  * https://github.com/intel/tbb/blob/2019_U5/include/tbb/tbb_stddef.h#L29
+  */
+-#if (TBB_INTERFACE_VERSION >= 12060) || (TBB_INTERFACE_VERSION < 12010)
+-#error "TBB version is incompatible, 2021.1 through to 2021.5 required, i.e. 12010 <= TBB_INTERFACE_VERSION < 12060"
++#if TBB_INTERFACE_VERSION < 12010
++#error "TBB version is too old, 2021 update 1, i.e. TBB_INTERFACE_VERSION >= 12010"
+ #endif
+ 
++static tbb::task_scheduler_handle tbb_tsh_attach()
++{
++#if TBB_INTERFACE_VERSION >= 12060
++    return tbb::attach();
++#else
++    return tbb::task_scheduler_handle::get();
++#endif
++}
++
++static void tbb_tsh_release(tbb::task_scheduler_handle& tsh)
++{
++#if TBB_INTERFACE_VERSION >= 12060
++    tsh.release();
++#else
++    tbb::task_scheduler_handle::release(tsh);
++#endif
++}
++
+ #define _DEBUG 0
+ #define _TRACE_SPLIT 0
+ 
+@@ -226,7 +245,7 @@ static void prepare_fork(void)
+         {
+             if (!tbb::finalize(tsh, std::nothrow))
+             {
+-                tbb::task_scheduler_handle::release(tsh);
++                tbb_tsh_release(tsh);
+                 puts("Unable to join threads to shut down before fork(). "
+                      "This can break multithreading in child processes.\n");
+             }
+@@ -251,7 +270,7 @@ static void reset_after_fork(void)
+ 
+     if(need_reinit_after_fork)
+     {
+-        tsh = tbb::task_scheduler_handle::get();
++        tsh = tbb_tsh_attach();
+         set_main_thread();
+         tsh_was_initialized = true;
+         need_reinit_after_fork = false;
+@@ -289,7 +308,7 @@ static void launch_threads(int count)
+     if(count < 1)
+         count = tbb::task_arena::automatic;
+ 
+-    tsh = tbb::task_scheduler_handle::get();
++    tsh = tbb_tsh_attach();
+     tsh_was_initialized = true;
+ 
+     tg = new tbb::task_group;
