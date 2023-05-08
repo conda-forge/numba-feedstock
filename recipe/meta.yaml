@@ -1,10 +1,11 @@
 {% set name = "numba" %}
-{% set version = "0.56.4" %}
-{% set sha256 = "ab96b731fb9dee12b404b42b7c1fb82c119352648906a80526afa73658895b73" %}
+{% set version = "0.57.0" %}
 {% set numpy_min_ver = "1.18" %}  # [py<39 and not (aarch64 or s390x or arm64)]
 {% set numpy_min_ver = "1.19" %}  # [py<39 and (aarch64 or s390x or arm64)]
 {% set numpy_min_ver = "1.19" %}  # [py==39 and not arm64]
 {% set numpy_min_ver = "1.21" %}  # [(py==39 and arm64) or py==310]
+{% set numpy_min_ver = "1.24" %}  # [py==311]
+
 
 package:
   name: numba
@@ -12,7 +13,7 @@ package:
 
 source:
   url: https://github.com/numba/{{ name }}/archive/{{ version }}.tar.gz
-  sha256: {{ sha256 }}
+  sha256: e6c266c20f941c1adde89e3a70e02ccc9f513635a46fa671ca8b69785e32a0d9
   patches:
     - patches/ignore_deprecation_warning_in_import_test.patch  # [py==310 and win]
     # This forces a benign DeprecationWarning in test_import.py to be ignored.
@@ -25,12 +26,12 @@ build:
   script:
     - export CC="${CC} -pthread"  # [linux]
     - export CXX="${CXX} -pthread"  # [linux]
-    - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv
+    - {{ PYTHON }} -m pip install . --no-deps  --no-build-isolation --ignore-installed -vvv
   # ignore_run_exports:
   #  # tbb-devel triggers hard dependency on tbb, this is not the case.
   #  - tbb
   skip: true  # [python_impl == 'pypy']
-  skip: true  # [py<37 or s390x]
+  skip: true  # [py<38 or s390x]
 
 requirements:
   build:
@@ -45,27 +46,28 @@ requirements:
     - pip
     - setuptools
     - wheel
-    - llvmlite 0.39.*
+    - llvmlite =0.40.0
     - numpy {{ numpy_min_ver }}
-    - tbb-devel 2021.*,<2021.6
+    - tbb-devel >=2021.6
     - _openmp_mutex            # [linux]
     - importlib_metadata       # [py<39]
 
   run:
     - python
     - importlib_metadata       # [py<39]
-    - llvmlite >=0.39.*,<0.40
+    - llvmlite >=0.40
     # NumPy has a hard upper limit.
     # NumPy 1.22.0, 1.22.1, 1.22.2 are all broken for ufuncs
     # xref: https://github.com/numba/numba/issues/7756
     # NumPy >=1.23 breaks with CUDA test: test_reinterpret_array_type
     # xref: https://github.com/numba/numba/issues/8529
-    - numpy >={{ numpy_min_ver }},!=1.22.0,!=1.22.1,!=1.22.2,<1.24
+    - numpy >=1.21,!=1.22.0,!=1.22.1,!=1.22.2,<1.25
     # needed for pkg_resources
     - setuptools
+  #  - libllvm14
 
   run_constrained:
-    - tbb >=2021.0, <2022
+    - tbb >=2021.6, <2022
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6      # [x86_64]
     - libopenblas >=0.3.18, !=0.3.20  # [arm64]
