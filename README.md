@@ -346,6 +346,3 @@ Feedstock Maintainers
 * [@souravsingh](https://github.com/souravsingh/)
 * [@step21](https://github.com/step21/)
 
-
-<!-- dummy commit to enable rerendering -->
-
