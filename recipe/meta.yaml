@@ -1,13 +1,13 @@
 {% set name = "numba" %}
-{% set version = "0.58.1" %}
-{% set sha256 = "487ded0633efccd9ca3a46364b40006dbdaca0f95e99b8b83e778d1195ebcbaa" %}
+{% set version = "0.59.0rc1" %}
+{% set sha256 = "6477c7e4ac128697b1182298da8e45ef74f74417ca6bc81f66c1f479e4773884" %}
 
 package:
   name: numba
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  url: https://github.com/numba/numba/archive/refs/tags/0.60.0dev0.tar.gz
   # url: https://github.com/numba/numba/archive/{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
@@ -39,7 +39,7 @@ requirements:
     - python
     - pip
     - setuptools
-    - llvmlite 0.41.*
+    - llvmlite 0.42.0rc1
     - numpy
     - tbb-devel 2021.6.0
 
