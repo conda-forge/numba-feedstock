@@ -7,8 +7,7 @@ package:
   version: {{ version }}
 
 source:
-  url: https://github.com/numba/numba/archive/refs/tags/0.59.0rc1.tar.gz
-    # url: https://github.com/numba/numba/archive/{{ version }}.tar.gz
+  url: https://github.com/numba/numba/archive/refs/tags/{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
 build:
