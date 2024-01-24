@@ -21,7 +21,7 @@ build:
   ignore_run_exports:
     # tbb-devel triggers hard dependency on tbb, this is not the case.
     - tbb
-  skip: true  # [py<38 or (python_impl == 'pypy')]
+  skip: true  # [py<39 or (python_impl == 'pypy')]
 
 requirements:
   build:
