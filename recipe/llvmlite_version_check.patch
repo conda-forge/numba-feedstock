@@ -1,0 +1,14 @@
+diff --git a/numba/__init__.py b/numba/__init__.py
+index 5e56ffe07..7d2ae72e2 100644
+--- a/numba/__init__.py
++++ b/numba/__init__.py
+@@ -142,7 +142,7 @@ __all__ = """
+     """.split() + types.__all__ + errors.__all__
+ 
+ 
+-_min_llvmlite_version = (0, 43, 0)
++_min_llvmlite_version = (0, 42, 0)
+ _min_llvm_version = (14, 0, 0)
+ 
+ def _ensure_llvm():
+

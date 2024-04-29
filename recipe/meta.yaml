@@ -9,6 +9,8 @@ package:
 source:
   url: https://github.com/gmarkall/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
   sha256: {{ sha256 }}
+  patches:
+    - llvmlite_version_check.patch
 
 build:
   number: 0
