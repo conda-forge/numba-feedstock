@@ -11,4 +11,16 @@ index 5e56ffe07..7d2ae72e2 100644
  _min_llvm_version = (14, 0, 0)
  
  def _ensure_llvm():
-
+diff --git a/setup.py b/setup.py
+index 56c180a5e..db28e3b8f 100644
+--- a/setup.py
++++ b/setup.py
+@@ -23,7 +23,7 @@ min_python_version = "3.9"
+ max_python_version = "3.13"  # exclusive
+ min_numpy_build_version = "1.11"
+ min_numpy_run_version = "1.22"
+-min_llvmlite_version = "0.43.0dev0"
++min_llvmlite_version = "0.42.0dev0"
+ max_llvmlite_version = "0.44"
+ 
+ if sys.platform.startswith('linux'):
