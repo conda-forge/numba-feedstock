@@ -1,6 +1,6 @@
 {% set name = "numba" %}
-{% set version = "0.58.1" %}
-{% set sha256 = "487ded0633efccd9ca3a46364b40006dbdaca0f95e99b8b83e778d1195ebcbaa" %}
+{% set version = "0.59.1" %}
+{% set sha256 = "76f69132b96028d2774ed20415e8c528a34e3299a40581bae178f0994a2f370b" %}
 
 package:
   name: numba
@@ -22,7 +22,7 @@ build:
   ignore_run_exports:
     # tbb-devel triggers hard dependency on tbb, this is not the case.
     - tbb
-  skip: true  # [py<38 or (python_impl == 'pypy')]
+  skip: true  # [py<39 or (python_impl == 'pypy')]
 
 requirements:
   build:
@@ -39,7 +39,7 @@ requirements:
     - python
     - pip
     - setuptools
-    - llvmlite 0.41.*
+    - llvmlite 0.42.*
     - numpy
     - tbb-devel 2021.6.0
 
@@ -47,7 +47,6 @@ requirements:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
     - {{ pin_compatible('numpy') }}
-    - importlib-metadata  # [py < 39]
 
   run_constrained:
     - {{ pin_compatible('tbb', max_pin=None) }}
