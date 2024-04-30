@@ -1,6 +1,5 @@
 set NUMBA_DEVELOPER_MODE=1
 set NUMBA_DISABLE_ERROR_MESSAGE_HIGHLIGHTING=1
-set NUMBA_CAPTURED_ERRORS=new_style
 
 @rem Validate Numba dependencies
 python -m pip check
