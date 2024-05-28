@@ -1,16 +1,14 @@
 {% set name = "numba" %}
-{% set version = "0.60.0dev3" %}
-{% set sha256 = "423300921c202e501b24925ecd3808e2b4692f165ee7171008e9663d1fa7bb6c" %}
+{% set version = "0.60.rc1" %}
+{% set sha256 = "47e9e4958c9a2226a4a1dd86a449dad95341fdef156915b29ef7d36cb58d3544" %}
 
 package:
   name: numba
   version: {{ version }}
 
 source:
-  url: https://github.com/gmarkall/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
   sha256: {{ sha256 }}
-  patches:
-    - llvmlite_version_check.patch
 
 build:
   number: 0
