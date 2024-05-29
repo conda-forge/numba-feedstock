@@ -1,5 +1,5 @@
 {% set name = "numba" %}
-{% set version = "0.60.rc1" %}
+{% set version = "0.60.0rc1" %}
 {% set sha256 = "47e9e4958c9a2226a4a1dd86a449dad95341fdef156915b29ef7d36cb58d3544" %}
 
 package:
