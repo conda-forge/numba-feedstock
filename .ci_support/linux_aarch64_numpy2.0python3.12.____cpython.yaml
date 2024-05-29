@@ -13,7 +13,7 @@ cdt_arch:
 cdt_name:
 - cos7
 channel_sources:
-- conda-forge/label/llvmlite_rc,conda-forge
+- conda-forge/label/numpy_rc,conda-forge
 channel_targets:
 - conda-forge numba_rc
 cxx_compiler:
@@ -23,13 +23,13 @@ cxx_compiler_version:
 docker_image:
 - quay.io/condaforge/linux-anvil-aarch64
 numpy:
-- '1.22'
+- '2.0'
 pin_run_as_build:
   python:
     min_pin: x.x
     max_pin: x.x
 python:
-- 3.10.* *_cpython
+- 3.12.* *_cpython
 python_impl:
 - cpython
 target_platform:
