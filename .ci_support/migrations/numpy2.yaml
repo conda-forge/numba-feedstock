@@ -1,6 +1,7 @@
 __migrator:
   build_number: 1
   kind: version
+  use_local: true
   commit_message: |
     Rebuild for numpy 2.0
     
@@ -58,6 +59,8 @@ __migrator:
     channel_sources:
       - conda-forge
       - conda-forge/label/numpy_rc,conda-forge
+      - conda-forge/label/llvmlite_rc,conda-forge
+      - conda-forge/label/llvmlite_rc,conda-forge/label/numpy_rc,conda-forge
 
 # needs to match length of zip {python, python_impl, numpy}
 # as it is in global CBC in order to override it
@@ -69,4 +72,5 @@ numpy:
   - 2.0
 channel_sources:
   - conda-forge/label/numpy_rc,conda-forge
+  - conda-forge/label/llvmlite_rc,conda-forge/label/numpy_rc,conda-forge
 migrator_ts: 1713572489.295986
