@@ -46,7 +46,6 @@ requirements:
   run:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
-    - {{ pin_compatible('numpy') }}
 
   run_constrained:
     - {{ pin_compatible('tbb', max_pin=None) }}
