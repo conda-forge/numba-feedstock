@@ -1,6 +1,6 @@
 {% set name = "numba" %}
-{% set version = "0.59.1" %}
-{% set sha256 = "76f69132b96028d2774ed20415e8c528a34e3299a40581bae178f0994a2f370b" %}
+{% set version = "0.60.0" %}
+{% set sha256 = "5df6158e5584eece5fc83294b949fd30b9f1125df7708862205217e068aabf16" %}
 
 package:
   name: numba
@@ -30,6 +30,7 @@ requirements:
     - cross-python_{{ target_platform }}     # [build_platform != target_platform]
     - numpy                                  # [build_platform != target_platform]
     - {{ compiler('c') }}
+    - {{ stdlib("c") }}
     - {{ compiler('cxx') }}
     # llvm is needed for the headers
     - llvm-openmp  # [osx]
