@@ -28,7 +28,7 @@ requirements:
   build:
     - python                                 # [build_platform != target_platform]
     - cross-python_{{ target_platform }}     # [build_platform != target_platform]
-    - numpy <2                               # [build_platform != target_platform]
+    - numpy                                  # [build_platform != target_platform]
     - {{ compiler('c') }}
     - {{ stdlib("c") }}
     - {{ compiler('cxx') }}
@@ -41,7 +41,7 @@ requirements:
     - pip
     - setuptools
     - llvmlite 0.43.*
-    - numpy <2
+    - numpy
     - tbb-devel 2021.6.0
 
   run:
@@ -50,7 +50,7 @@ requirements:
     # NumPy has a hard upper limit.
     # Also NumPy 1.22.0, 1.22.1, 1.22.2 are all broken for ufuncs
     # xref: https://github.com/numba/numba/issues/7756
-    - numpy >=1.22.3,<2
+    - numpy >=1.22.3,<2.1
 
   run_constrained:
     - {{ pin_compatible('tbb', max_pin=None) }}
