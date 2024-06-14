@@ -1,6 +1,6 @@
 {% set name = "numba" %}
-{% set version = "0.59.1" %}
-{% set sha256 = "76f69132b96028d2774ed20415e8c528a34e3299a40581bae178f0994a2f370b" %}
+{% set version = "0.60.0" %}
+{% set sha256 = "5df6158e5584eece5fc83294b949fd30b9f1125df7708862205217e068aabf16" %}
 
 package:
   name: numba
@@ -40,13 +40,17 @@ requirements:
     - python
     - pip
     - setuptools
-    - llvmlite 0.42.*
+    - llvmlite 0.43.*
     - numpy
     - tbb-devel 2021.6.0
 
   run:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
+    # NumPy has a hard upper limit.
+    # Also NumPy 1.22.0, 1.22.1, 1.22.2 are all broken for ufuncs
+    # xref: https://github.com/numba/numba/issues/7756
+    - numpy >=1.22.3,<2.1
 
   run_constrained:
     - {{ pin_compatible('tbb', max_pin=None) }}
@@ -58,10 +62,6 @@ requirements:
     - cudatoolkit >=11.2
     # scipy 1.0 or later
     - scipy >=1.0
-    # NumPy has a hard upper limit.
-    # Also NumPy 1.22.0, 1.22.1, 1.22.2 are all broken for ufuncs
-    # xref: https://github.com/numba/numba/issues/7756
-    - numpy >=1.22.3,<1.27
     # CUDA Python 11.6 or later
     - cuda-python >=11.6
 
