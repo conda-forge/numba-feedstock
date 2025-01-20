@@ -1,13 +1,13 @@
 {% set name = "numba" %}
-{% set version = "0.60.0" %}
-{% set sha256 = "5df6158e5584eece5fc83294b949fd30b9f1125df7708862205217e068aabf16" %}
+{% set version = "0.61.0" %}
+{% set sha256 = "888d2e89b8160899e19591467e8fdd4970e07606e1fbc248f239c89818d5f925" %}
 
 package:
   name: numba
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
 build:
