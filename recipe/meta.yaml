@@ -21,7 +21,7 @@ build:
   ignore_run_exports:
     # tbb-devel triggers hard dependency on tbb, this is not the case.
     - tbb
-  skip: true  # [py<39 or (python_impl == 'pypy')]
+  skip: true  # [py<310 or (python_impl == 'pypy')]
 
 requirements:
   build:
@@ -39,17 +39,15 @@ requirements:
     - python
     - pip
     - setuptools
-    - llvmlite 0.43.*
+    - llvmlite 0.44.*
     - numpy
     - tbb-devel 2021.6.0
 
   run:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
-    # NumPy has a hard upper limit.
-    # Also NumPy 1.22.0, 1.22.1, 1.22.2 are all broken for ufuncs
-    # xref: https://github.com/numba/numba/issues/7756
-    - numpy >=1.22.3,<2.1
+    # NumPy has lower and upper limits
+    - numpy >=1.24,<2.2
 
   run_constrained:
     - {{ pin_compatible('tbb', max_pin=None) }}
