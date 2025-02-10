@@ -16,30 +16,7 @@ else
   echo Error
 fi
 
-# limit CPUs in use on PPC64LE and AARCH64, fork() issues
-# occur on high core count systems
-archstr=`uname -m`
-if [[ "$archstr" == 'ppc64le' ]]; then
-    TEST_NPROCS=1
-elif [[ "$archstr" == 'aarch64' ]]; then
-    TEST_NPROCS=4
-else
-    TEST_NPROCS=${CPU_COUNT}
-fi
-
-# Disable NumPy dispatching to AVX512_SKX feature extensions if the chip is
-# reported to support the feature and NumPy >= 1.22 as this results in the use
-# of low accuracy SVML libm replacements in ufunc loops.
-_NPY_CMD='from numba.misc import numba_sysinfo;\
-          sysinfo=numba_sysinfo.get_sysinfo();\
-          print(sysinfo["NumPy AVX512_SKX detected"] and
-                sysinfo["NumPy Version"]>="1.22")'
-NUMPY_DETECTS_AVX512_SKX_NP_GT_122=$(python -c "$_NPY_CMD")
-echo "NumPy >= 1.22 with AVX512_SKX detected: $NUMPY_DETECTS_AVX512_SKX_NP_GT_122"
-
-if [[ "$NUMPY_DETECTS_AVX512_SKX_NP_GT_122" == "True" ]]; then
-    export NPY_DISABLE_CPU_FEATURES="AVX512_SKX"
-fi
+TEST_NPROCS=${CPU_COUNT}
 
 # Validate Numba dependencies
 python -m pip check
@@ -53,13 +30,25 @@ numba -s
 # Check test discovery works
 python -m numba.tests.test_runtests
 
-if [[ "$archstr" == 'aarch64' ]] || [[ "$archstr" == "ppc64le" ]]; then
-	echo "Skipping numba test suite on $archstr"
-	#echo 'Running only a random selection of tests'
-	#$SEGVCATCH python -m numba.runtests -b --random='0.15' --exclude-tags='long_running' -m $TEST_NPROCS -- numba.tests
-# Else run the whole test suite
+if [[ "$build_platform" != "$target_platfrom" ]]; then
+	echo "Skipping numba test suite on $archstr because $build_platform != $host_platform"
 else
-	echo "Running all the tests except long_running on '$archstr'"
+	echo "Running all the tests except long_running on '$targt_platform'"
+
+    # Disable NumPy dispatching to AVX512_SKX feature extensions if the chip is
+    # reported to support the feature and NumPy >= 1.22 as this results in the use
+    # of low accuracy SVML libm replacements in ufunc loops.
+    _NPY_CMD='from numba.misc import numba_sysinfo;\
+              sysinfo=numba_sysinfo.get_sysinfo();\
+              print(sysinfo["NumPy AVX512_SKX detected"] and
+                    sysinfo["NumPy Version"]>="1.22")'
+    NUMPY_DETECTS_AVX512_SKX_NP_GT_122=$(python -c "$_NPY_CMD")
+    echo "NumPy >= 1.22 with AVX512_SKX detected: $NUMPY_DETECTS_AVX512_SKX_NP_GT_122"
+
+    if [[ "$NUMPY_DETECTS_AVX512_SKX_NP_GT_122" == "True" ]]; then
+        export NPY_DISABLE_CPU_FEATURES="AVX512_SKX"
+    fi
+
 	echo "Running: $SEGVCATCH python -m numba.runtests -b -m $TEST_NPROCS -- $TESTS_TO_RUN"
-$SEGVCATCH python -m numba.runtests -b --exclude-tags='long_running' -m $TEST_NPROCS -- $TESTS_TO_RUN
+    $SEGVCATCH python -m numba.runtests -b --exclude-tags='long_running' -m $TEST_NPROCS -- $TESTS_TO_RUN
 fi
