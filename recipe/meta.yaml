@@ -53,7 +53,7 @@ requirements:
     - {{ pin_compatible('tbb', max_pin=None) }}
     # avoid confusion from openblas bugs
     - libopenblas !=0.3.6             # [x86_64]
-    - libopenblas >=0.3.18, !=0.3.20  # [arm64]
+    - libopenblas >=0.3.18,!=0.3.20   # [arm64]
     # CUDA 11.2 or later is required for CUDA support
     - cuda-version >=11.2
     - cudatoolkit >=11.2
