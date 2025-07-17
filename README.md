@@ -3,7 +3,7 @@ About numba-feedstock
 
 Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/numba-feedstock/blob/main/LICENSE.txt)
 
-Home: http://numba.pydata.org
+Home: http://numba.pydata.org/
 
 Package license: BSD-2-Clause
 
@@ -16,7 +16,6 @@ Documentation: http://numba.pydata.org/
 Numba is an Open Source NumPy-aware optimizing compiler for Python
 sponsored by Anaconda, Inc. It uses the remarkable LLVM compiler
 infrastructure to compile Python syntax to machine code."
-
 
 Current build status
 ====================
