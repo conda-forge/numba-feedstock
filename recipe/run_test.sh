@@ -30,7 +30,7 @@ numba -s
 # Check test discovery works
 python -m numba.tests.test_runtests
 
-if [[ "$build_platform" != "$target_platfrom" ]]; then
+if [[ "$build_platform" != "$target_platform" ]]; then
 	echo "Skipping numba test suite on $archstr because $build_platform != $host_platform"
 else
 	echo "Running all the tests except long_running on '$targt_platform'"
