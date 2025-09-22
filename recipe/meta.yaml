@@ -11,7 +11,7 @@ source:
   sha256: {{ sha256 }}
 
 build:
-  number: 1
+  number: 2
   entry_points:
     - numba = numba.misc.numba_entry:main
   script:
@@ -126,3 +126,4 @@ extra:
     - mbargull
     - jakirkham
     - step21
+    - esc
