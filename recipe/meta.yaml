@@ -39,15 +39,15 @@ requirements:
     - python
     - pip
     - setuptools
-    - llvmlite 0.44.*
-    - numpy >=1.24,<2.3
+    - llvmlite 0.45.*
+    - numpy >=1.24,<2.4
     - tbb-devel 2021.6.0
 
   run:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
     # NumPy has lower and upper limits
-    - numpy >=1.24,<2.3
+    - numpy >=1.24,<2.4
 
   run_constrained:
     - {{ pin_compatible('tbb', max_pin=None) }}
