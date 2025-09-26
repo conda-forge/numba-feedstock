@@ -1,6 +1,10 @@
 set NUMBA_DEVELOPER_MODE=1
 set NUMBA_DISABLE_ERROR_MESSAGE_HIGHLIGHTING=1
 
+@rem Set CPU to generic to avoid LLVM 20 OOM issues
+set NUMBA_CPU_NAME=generic
+set _NUMBA_REDUCED_TESTING=1
+
 @rem Validate Numba dependencies
 python -m pip check
 if errorlevel 1 exit 1
