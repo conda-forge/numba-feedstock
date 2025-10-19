@@ -1,23 +1,13 @@
 c_compiler:
-<<<<<<<< HEAD:.ci_support/win_64_numpy2.0python3.11.____cpython.yaml
-- vs2019
-========
 - vs2022
->>>>>>>> upstream/main:.ci_support/win_64_python3.11.____cpython.yaml
 c_stdlib:
 - vs
 channel_sources:
-- conda-forge/label/numpy_rc,conda-forge
+- conda-forge
 channel_targets:
 - conda-forge main
 cxx_compiler:
-<<<<<<<< HEAD:.ci_support/win_64_numpy2.0python3.11.____cpython.yaml
-- vs2019
-numpy:
-- '2.0'
-========
 - vs2022
->>>>>>>> upstream/main:.ci_support/win_64_python3.11.____cpython.yaml
 pin_run_as_build:
   python:
     min_pin: x.x

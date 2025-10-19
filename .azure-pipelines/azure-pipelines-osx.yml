@@ -5,34 +5,6 @@
 jobs:
 - job: osx
   pool:
-<<<<<<< HEAD
-    vmImage: macOS-12
-  strategy:
-    matrix:
-      osx_64_numpy2.0python3.10.____cpython:
-        CONFIG: osx_64_numpy2.0python3.10.____cpython
-        UPLOAD_PACKAGES: 'True'
-      osx_64_numpy2.0python3.11.____cpython:
-        CONFIG: osx_64_numpy2.0python3.11.____cpython
-        UPLOAD_PACKAGES: 'True'
-      osx_64_numpy2.0python3.12.____cpython:
-        CONFIG: osx_64_numpy2.0python3.12.____cpython
-        UPLOAD_PACKAGES: 'True'
-      osx_64_numpy2.0python3.9.____cpython:
-        CONFIG: osx_64_numpy2.0python3.9.____cpython
-        UPLOAD_PACKAGES: 'True'
-      osx_arm64_numpy2.0python3.10.____cpython:
-        CONFIG: osx_arm64_numpy2.0python3.10.____cpython
-        UPLOAD_PACKAGES: 'True'
-      osx_arm64_numpy2.0python3.11.____cpython:
-        CONFIG: osx_arm64_numpy2.0python3.11.____cpython
-        UPLOAD_PACKAGES: 'True'
-      osx_arm64_numpy2.0python3.12.____cpython:
-        CONFIG: osx_arm64_numpy2.0python3.12.____cpython
-        UPLOAD_PACKAGES: 'True'
-      osx_arm64_numpy2.0python3.9.____cpython:
-        CONFIG: osx_arm64_numpy2.0python3.9.____cpython
-=======
     vmImage: macOS-15
   strategy:
     matrix:
@@ -59,7 +31,6 @@ jobs:
         UPLOAD_PACKAGES: 'True'
       osx_arm64_python3.13.____cp313:
         CONFIG: osx_arm64_python3.13.____cp313
->>>>>>> upstream/main
         UPLOAD_PACKAGES: 'True'
   timeoutInMinutes: 360
   variables: {}

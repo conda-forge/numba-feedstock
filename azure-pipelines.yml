@@ -2,12 +2,6 @@
 # update the conda-forge.yml and/or the recipe/meta.yaml.
 # -*- mode: yaml -*-
 
-<<<<<<< HEAD
-jobs:
-  - template: ./.azure-pipelines/azure-pipelines-linux.yml
-  - template: ./.azure-pipelines/azure-pipelines-osx.yml
-  - template: ./.azure-pipelines/azure-pipelines-win.yml
-=======
 stages:
 - stage: Check
   jobs:
@@ -37,4 +31,3 @@ stages:
     - template: ./.azure-pipelines/azure-pipelines-linux.yml
     - template: ./.azure-pipelines/azure-pipelines-osx.yml
     - template: ./.azure-pipelines/azure-pipelines-win.yml
->>>>>>> upstream/main
