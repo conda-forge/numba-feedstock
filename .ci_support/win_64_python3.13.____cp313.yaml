@@ -3,7 +3,7 @@ c_compiler:
 c_stdlib:
 - vs
 channel_sources:
-- conda-forge/label/llvmlite_rc
+- conda-forge/label/llvmlite_rc,conda-forge
 channel_targets:
 - conda-forge numba_rc
 cxx_compiler:

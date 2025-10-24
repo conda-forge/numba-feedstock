@@ -11,7 +11,7 @@ c_stdlib:
 c_stdlib_version:
 - '11.0'
 channel_sources:
-- conda-forge/label/llvmlite_rc
+- conda-forge/label/llvmlite_rc,conda-forge
 channel_targets:
 - conda-forge numba_rc
 cxx_compiler:
