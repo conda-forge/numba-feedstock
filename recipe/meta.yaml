@@ -1,6 +1,5 @@
 {% set name = "numba" %}
-{% set version = "0.62.1" %}
-{% set sha256 = "7b774242aa890e34c21200a1fc62e5b5757d5286267e71103257f4e2af0d5161" %}
+{% set version = "0.63.0b1" %}
 
 package:
   name: numba
@@ -8,10 +7,10 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: {{ sha256 }}
+  sha256: 66b7a0052e2cfe8befa273e5af3eae75e102ac9c3da7d2ca361b7b72cf5051c8
 
 build:
-  number: 1
+  number: 0
   entry_points:
     - numba = numba.misc.numba_entry:main
   script:
@@ -21,13 +20,12 @@ build:
   ignore_run_exports:
     # tbb-devel triggers hard dependency on tbb, this is not the case.
     - tbb
-  skip: true  # [py<310 or (python_impl == 'pypy')]
 
 requirements:
   build:
     - python                                 # [build_platform != target_platform]
     - cross-python_{{ target_platform }}     # [build_platform != target_platform]
-    - numpy >=1.24,<2.4                      # [build_platform != target_platform]
+    - numpy >=1.24                           # [build_platform != target_platform]
     - {{ stdlib('c') }}
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
@@ -39,15 +37,14 @@ requirements:
     - python
     - pip
     - setuptools
-    - llvmlite 0.45.*
-    - numpy >=1.24,<2.4
+    - llvmlite 0.46.*
+    - numpy >=1.24
     - tbb-devel 2021.6.0
 
   run:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
-    # NumPy has lower and upper limits
-    - numpy >=1.24,<2.4
+    - numpy >=1.24
 
   run_constrained:
     - {{ pin_compatible('tbb', max_pin=None) }}
