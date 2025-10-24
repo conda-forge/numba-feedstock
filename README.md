@@ -221,14 +221,14 @@ Current release info
 Installing numba
 ================
 
-Installing `numba` from the `conda-forge` channel can be achieved by adding `conda-forge` to your channels with:
+Installing `numba` from the `conda-forge/label/numba_rc` channel can be achieved by adding `conda-forge/label/numba_rc` to your channels with:
 
 ```
-conda config --add channels conda-forge
+conda config --add channels conda-forge/label/numba_rc
 conda config --set channel_priority strict
 ```
 
-Once the `conda-forge` channel has been enabled, `numba` can be installed with `conda`:
+Once the `conda-forge/label/numba_rc` channel has been enabled, `numba` can be installed with `conda`:
 
 ```
 conda install numba
@@ -243,26 +243,26 @@ mamba install numba
 It is possible to list all of the versions of `numba` available on your platform with `conda`:
 
 ```
-conda search numba --channel conda-forge
+conda search numba --channel conda-forge/label/numba_rc
 ```
 
 or with `mamba`:
 
 ```
-mamba search numba --channel conda-forge
+mamba search numba --channel conda-forge/label/numba_rc
 ```
 
 Alternatively, `mamba repoquery` may provide more information:
 
 ```
 # Search all versions available on your platform:
-mamba repoquery search numba --channel conda-forge
+mamba repoquery search numba --channel conda-forge/label/numba_rc
 
 # List packages depending on `numba`:
-mamba repoquery whoneeds numba --channel conda-forge
+mamba repoquery whoneeds numba --channel conda-forge/label/numba_rc
 
 # List dependencies of `numba`:
-mamba repoquery depends numba --channel conda-forge
+mamba repoquery depends numba --channel conda-forge/label/numba_rc
 ```
 
 
