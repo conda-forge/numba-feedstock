@@ -1,0 +1,4 @@
+channel_targets:
+  - conda-forge numba_rc
+channel_sources:
+  - conda-forge/label/llvmlite_rc,conda-forge
