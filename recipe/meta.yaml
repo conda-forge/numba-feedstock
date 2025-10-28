@@ -10,7 +10,7 @@ source:
   sha256: 66b7a0052e2cfe8befa273e5af3eae75e102ac9c3da7d2ca361b7b72cf5051c8
 
 build:
-  number: 0
+  number: 1
   entry_points:
     - numba = numba.misc.numba_entry:main
   script:
@@ -25,7 +25,7 @@ requirements:
   build:
     - python                                 # [build_platform != target_platform]
     - cross-python_{{ target_platform }}     # [build_platform != target_platform]
-    - numpy >=1.24                           # [build_platform != target_platform]
+    - numpy                                  # [build_platform != target_platform]
     - {{ stdlib('c') }}
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
@@ -38,13 +38,13 @@ requirements:
     - pip
     - setuptools
     - llvmlite 0.46.*
-    - numpy >=1.24
+    - numpy
     - tbb-devel 2021.6.0
 
   run:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
-    - numpy >=1.24
+    - numpy >=1.22
 
   run_constrained:
     - {{ pin_compatible('tbb', max_pin=None) }}
