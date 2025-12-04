@@ -1,5 +1,5 @@
 {% set name = "numba" %}
-{% set version = "0.63.0b1" %}
+{% set version = "0.63.0rc1" %}
 
 package:
   name: numba
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 66b7a0052e2cfe8befa273e5af3eae75e102ac9c3da7d2ca361b7b72cf5051c8
+  sha256: 6a09200a740ca1020910f9883f56833c81487a6fc548898e1690aeef19133e3b
 
 build:
   number: 1
@@ -44,7 +44,7 @@ requirements:
   run:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
-    - numpy >=1.22
+    - numpy >=1.22.3,<2.4
 
   run_constrained:
     - {{ pin_compatible('tbb', max_pin=None) }}
