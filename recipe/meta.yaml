@@ -45,7 +45,7 @@ requirements:
     - python
     - {{ pin_compatible('llvmlite', max_pin='x.x') }}
     # NumPy has lower and upper limits
-    - numpy >=1.22.3,<2.4
+    - numpy >=1.22.3,<2.5
 
   run_constrained:
     - {{ pin_compatible('tbb', max_pin=None) }}
