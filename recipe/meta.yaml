@@ -1,5 +1,5 @@
 {% set name = "numba" %}
-{% set version = "0.64.0" %}
+{% set version = "0.65.0" %}
 
 package:
   name: numba
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 95e7300af648baa3308127b1955b52ce6d11889d16e8cfe637b4f85d2fca52b1
+  sha256: edad0d9f6682e93624c00125a471ae4df186175d71fd604c983c377cdc03e68b
 
 build:
   number: 0
@@ -37,7 +37,7 @@ requirements:
     - python
     - pip
     - setuptools
-    - llvmlite 0.46.*
+    - llvmlite 0.47.*
     - numpy
     - tbb-devel 2021.6.0
 
