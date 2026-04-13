@@ -10,7 +10,7 @@ source:
   sha256: edad0d9f6682e93624c00125a471ae4df186175d71fd604c983c377cdc03e68b
 
 build:
-  number: 0
+  number: 1
   entry_points:
     - numba = numba.misc.numba_entry:main
   script:
