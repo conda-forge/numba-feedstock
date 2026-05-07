@@ -41,6 +41,7 @@ requirements:
     # needed to get the run exports for
     # llvm-open to match global pinnings
     - llvm-openmp  # [osx]
+    - libgomp      # [linux]
     - numpy
     - tbb-devel 2021.6.0
 
