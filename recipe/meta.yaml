@@ -10,7 +10,7 @@ source:
   sha256: 19357146c32fe9ed25059ab915e8465fb13951cf6b0aace3826b76886373ab23
 
 build:
-  number: 0
+  number: 1
   entry_points:
     - numba = numba.misc.numba_entry:main
   script:
@@ -38,6 +38,8 @@ requirements:
     - pip
     - setuptools
     - llvmlite 0.47.*
+    - llvm-openmp  # [osx]
+    - libgomp      # [linux]
     - numpy
     - tbb-devel 2021.6.0
 
