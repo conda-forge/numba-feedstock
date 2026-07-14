@@ -16,7 +16,7 @@ build:
   script:
     - export CC="${CC} -pthread"  # [linux]
     - export CXX="${CXX} -pthread"  # [linux]
-    - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv
+    - {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -vvv
   ignore_run_exports:
     # tbb-devel triggers hard dependency on tbb, this is not the case.
     - tbb
@@ -40,7 +40,7 @@ requirements:
     - llvmlite 0.48.*
     - llvm-openmp  # [osx]
     - libgomp      # [linux]
-    - numpy
+    - numpy >=1.24,<2.5
     - tbb-devel 2021.6.0
 
   run:
