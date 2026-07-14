@@ -40,8 +40,8 @@ else
     # of low accuracy SVML libm replacements in ufunc loops.
     _NPY_CMD='from numba.misc import numba_sysinfo;\
               sysinfo=numba_sysinfo.get_sysinfo();\
-              print(sysinfo["NumPy AVX512_SKX detected"] and
-                    sysinfo["NumPy Version"]>="1.22")'
+              print("AVX512_SKX" in sysinfo.get("NumPy Supported SIMD features", ()) and
+                    sysinfo.get("NumPy Version", "0")>="1.22")'
     NUMPY_DETECTS_AVX512_SKX_NP_GT_122=$(python -c "$_NPY_CMD")
     echo "NumPy >= 1.22 with AVX512_SKX detected: $NUMPY_DETECTS_AVX512_SKX_NP_GT_122"
 

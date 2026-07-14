@@ -37,7 +37,7 @@ requirements:
     - python
     - pip
     - setuptools
-    - llvmlite 0.47.*
+    - llvmlite 0.48.*
     - llvm-openmp  # [osx]
     - libgomp      # [linux]
     - numpy
@@ -127,3 +127,4 @@ extra:
     - jakirkham
     - step21
     - esc
+    - MementoRC
