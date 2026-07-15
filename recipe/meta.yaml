@@ -16,7 +16,7 @@ build:
   script:
     - export CC="${CC} -pthread"  # [linux]
     - export CXX="${CXX} -pthread"  # [linux]
-    - {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-build-isolation -vvv
+    - {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv
   ignore_run_exports:
     # tbb-devel triggers hard dependency on tbb, this is not the case.
     - tbb
