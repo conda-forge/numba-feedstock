@@ -32,7 +32,7 @@ requirements:
       then:
         - python
         - cross-python_${{ target_platform }}
-        - numpy >=1.24,<2.5
+        - numpy >=2.0,<2.6
     - ${{ stdlib('c') }}
     - ${{ compiler('c') }}
     - ${{ compiler('cxx') }}
@@ -45,14 +45,14 @@ requirements:
     - python
     - pip
     - setuptools
-    - llvmlite 0.48.*
-    - numpy >=1.24,<2.5
+    - llvmlite 0.49.*
+    - numpy >=2.0,<2.6
     - tbb-devel 2021.6.0.*
   run:
     - python
     - ${{ pin_compatible('llvmlite', upper_bound='x.x') }}
     # NumPy has lower and upper limits
-    - numpy >=1.22.3,<2.5
+    - numpy >=1.22.3,<2.6
   ignore_run_exports:
     by_name:
       - tbb
