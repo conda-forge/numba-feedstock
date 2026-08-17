@@ -12,6 +12,10 @@ package:
 source:
   url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/${{ name }}-${{ version }}.tar.gz
   sha256: ${{ sha256 }}
+  patches:
+    # Changes the numba_frexp/numba_ldexp helper signatures, so it must apply on
+    # every platform to keep the C helpers and the JIT call sites in agreement.
+    - patches/0001-ppc64le-abi-workaround-ldexp-frexp.patch
 
 build:
   number: ${{ build_number }}
