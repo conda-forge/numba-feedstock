@@ -12,6 +12,7 @@ set "PYTHONUTF8=1"
 python -m numba.tests.test_runtests
 if errorlevel 1 exit /b 1
 
+<<<<<<< HEAD
 @rem Vary which subset of tests --random selects across CI runs/architectures
 @rem instead of always sampling the same fixed subset (numba's own default
 @rem random_seed is a hardcoded 42 -- see recipe/patches/0002-...). python_version
@@ -28,6 +29,8 @@ if not "%flow_run_id%"=="" if not "%flow_run_id%"=="0" (
   echo Randomizing numba test selection: NUMBA_TEST_RANDOM_SEED=%NUMBA_TEST_RANDOM_SEED% ^(from flow_run_id=%flow_run_id% target_platform=%target_platform% python_version=%python_version%^)
 )
 
+=======
+>>>>>>> upstream/main
 @rem Windows: the test suite is sampled via --random to stay under the rattler-build post-test
 @rem cleanup race (prefix-dev/rattler-build#2657). At high test volume rattler-build intermittently
 @rem fails to remove its own test sandbox (Access is denied, os error 5). The failure probability
@@ -36,8 +39,14 @@ if not "%flow_run_id%"=="" if not "%flow_run_id%"=="0" (
 @rem (FAST_TESTS, the normal build_number>=1 CI path) is reliably green; ~50%% (build_number==0)
 @rem samples more and may occasionally need a Windows job re-run.
 if "%FAST_TESTS%"=="1" (
+<<<<<<< HEAD
   python -m numba.runtests -b --random=0.15 --exclude-tags=long_running -m %CPU_COUNT%
 ) else (
   python -m numba.runtests -b --random=0.55 --exclude-tags=long_running -m %CPU_COUNT%
+=======
+  python -m numba.runtests -b --random=0.1 --exclude-tags=long_running -m %CPU_COUNT%
+) else (
+  python -m numba.runtests -b --random=0.5 --exclude-tags=long_running -m %CPU_COUNT%
+>>>>>>> upstream/main
 )
 if errorlevel 1 exit /b 1

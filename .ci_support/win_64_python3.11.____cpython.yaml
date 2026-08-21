@@ -16,5 +16,8 @@ python:
 - 3.11.* *_cpython
 target_platform:
 - win-64
+<<<<<<< HEAD
 tbb_devel:
 - '2023'
+=======
+>>>>>>> upstream/main
