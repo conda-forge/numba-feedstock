@@ -4,7 +4,7 @@ bot:
   abi_migration_branches:
   - rc
 build_platform:
-  linux_ppc64le: linux_aarch64
+  linux_ppc64le: linux_64
 conda_build:
   error_overlinking: true
 conda_forge_output_validation: true
@@ -13,6 +13,7 @@ github:
   tooling_branch_name: main
 provider:
   linux_aarch64: default
+  linux_ppc64le: default
   osx_64: default
   osx_arm64: default
 test: native_and_emulated

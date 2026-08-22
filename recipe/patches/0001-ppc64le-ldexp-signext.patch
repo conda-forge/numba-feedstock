@@ -1,0 +1,36 @@
+diff --git a/numba/cpython/mathimpl.py b/numba/cpython/mathimpl.py
+--- a/numba/cpython/mathimpl.py
++++ b/numba/cpython/mathimpl.py
+@@ -286,6 +286,19 @@
+         "double": "numba_ldexp",
+         }[str(fltty)]
+     fn = cgutils.insert_pure_function(builder.module, fnty, name=fname)
++    # ppc64le ELFv2 ABI fix (numba#8489): the ELFv2 psABI requires
++    # sub-doubleword integer arguments to be sign- or zero-extended by
++    # the caller according to their C type. Without an explicit LLVM
++    # attribute, LLVM zero-extends a bare i32 into the 64-bit GPR
++    # (emitting `clrldi`), but numba_ldexp{,f}'s `int exp` parameter is
++    # signed, and the GCC-compiled helper both produces and relies on a
++    # sign-extended register value. That mismatch corrupts negative
++    # exponents crossing the JIT->C boundary (e.g. -2 arrives as
++    # 4294967294), making math.ldexp() return inf. Marking the argument
++    # `signext` makes LLVM emit `extsw`, matching the ABI and the C
++    # callee's expectations. Idempotent even if `fn` was already
++    # declared earlier in this module.
++    fn.args[1].add_attribute("signext")
+     res = builder.call(fn, (val, exp))
+     return impl_ret_untracked(context, builder, sig.return_type, res)
+
+diff --git a/numba/np/math/mathimpl.py b/numba/np/math/mathimpl.py
+--- a/numba/np/math/mathimpl.py
++++ b/numba/np/math/mathimpl.py
+@@ -284,6 +284,9 @@
+         "double": "numba_ldexp",
+         }[str(fltty)]
+     fn = cgutils.insert_pure_function(builder.module, fnty, name=fname)
++    # Same ppc64le ELFv2 signext fix as numba/cpython/mathimpl.py -- this
++    # copy backs the np.ldexp ufunc via numba/np/npyfuncs.py.
++    fn.args[1].add_attribute("signext")
+     res = builder.call(fn, (val, exp))
+     return impl_ret_untracked(context, builder, sig.return_type, res)
+
