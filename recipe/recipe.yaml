@@ -1,10 +1,9 @@
 context:
   build_number: 1
   name: numba
-  version: 0.67.0rc1
+  version: "0.67.0rc1"
   sha256: 36d3f50cbb992a4c40a53f070eb04ae774d8be5c0c733994307f65e134112e3e
   fast_tests: "1"
-  ppc64le_on_aarch64: ${{ target_platform == "linux-ppc64le" and build_platform == "linux-aarch64" }}
 
 package:
   name: numba
@@ -40,9 +39,9 @@ build:
   skip: match(python, "<3.10")
   script:
     - if: linux
-      then: export CC="${CC} -pthread"
-    - if: linux
-      then: export CXX="${CXX} -pthread"
+      then:
+        - export CC="${CC} -pthread"
+        - export CXX="${CXX} -pthread"
     - ${{ PYTHON }} -m pip install . --no-deps --ignore-installed -vvv
   python:
     entry_points:
@@ -50,30 +49,31 @@ build:
 
 requirements:
   build:
-    - ${{ stdlib('c') }}
-    - ${{ compiler('c') }}
-    - ${{ compiler('cxx') }}
     - if: build_platform != target_platform
       then:
         - python
         - cross-python_${{ target_platform }}
-        - numpy >=1.24,<2.5
+        - numpy >=2.0,<2.6
+    - ${{ stdlib('c') }}
+    - ${{ compiler('c') }}
+    - ${{ compiler('cxx') }}
     # llvm is needed for the headers
     - if: osx
       then: llvm-openmp
     - if: linux
       then: libgomp
   host:
+    - python
     - pip
-    - python
-    - llvmlite 0.49.*
-    - numpy >=1.24,<2.5
     - setuptools
-    - tbb-devel
+    - llvmlite 0.49.*
+    - numpy >=2.0,<2.6
+    - tbb-devel 2021.6.0.*
   run:
-    - ${{ pin_compatible('llvmlite', upper_bound='x.x') }}
     - python
-    - numpy >=1.22.3,<2.5
+    - ${{ pin_compatible('llvmlite', upper_bound='x.x') }}
+    # NumPy has lower and upper limits
+    - numpy >=1.22.3,<2.6
   ignore_run_exports:
     by_name:
       - tbb
@@ -89,82 +89,66 @@ requirements:
     - cuda-python >=11.6
 
 tests:
-  - if: not ppc64le_on_aarch64 and not ppc64le
-    then:
-      - python:
-          imports:
-            - numba
-            - numba.core.annotations
-            - numba.core.datamodel
-            - numba.core.rewrites
-            - numba.core.runtime
-            - numba.core.typeconv
-            - numba.core.typing
-            - numba.core.unsafe
-            - numba.cuda
-            - numba.cuda.cudadrv
-            - numba.cuda.kernels
-            - numba.cuda.simulator
-            - numba.cuda.simulator.cudadrv
-            - numba.cuda.tests
-            - numba.cuda.tests.cudadrv
-            - numba.cuda.tests.cudapy
-            - numba.cuda.tests.cudasim
-            - numba.cuda.tests.nocuda
-            - numba.experimental.jitclass
-            - numba.np.ufunc
-            - numba.scripts
-            - numba.testing
-            - numba.tests
-            - numba.tests.npyufunc
-          pip_check: true
+  - python:
+      imports:
+        - numba
+        - numba.core.annotations
+        - numba.core.datamodel
+        - numba.core.rewrites
+        - numba.core.runtime
+        - numba.core.typeconv
+        - numba.core.typing
+        - numba.core.unsafe
+        - numba.cuda
+        - numba.cuda.cudadrv
+        - numba.cuda.kernels
+        - numba.cuda.simulator
+        - numba.cuda.simulator.cudadrv
+        - numba.cuda.tests
+        - numba.cuda.tests.cudadrv
+        - numba.cuda.tests.cudapy
+        - numba.cuda.tests.cudasim
+        - numba.cuda.tests.nocuda
+        - numba.experimental.jitclass
+        - numba.np.ufunc
+        - numba.scripts
+        - numba.testing
+        - numba.tests
+        - numba.tests.npyufunc
+      pip_check: true
+
+  - script:
+      - numba -h
+      - numba -s
 
   - script:
       content:
-        - if: not ppc64le_on_aarch64 and not ppc64le
-          then:
-            - numba -h
-            - numba -s
-
-  - script:
-      content:
-        - if: unix
-          then:
-            - export CROSSCOMPILING_EMULATOR=${QEMU_EXECVE:-""}
-            - export QEMU_EXECVE=${QEMU_EXECVE:-""}
-            - export QEMU_LD_PREFIX=${CONDA_BUILD_SYSROOT}
         - ${{ "bash run_test.sh" if unix else "cmd /c run_test.bat" }}
       env:
-        FAST_TESTS: ${{ "1" if not unix else "0" if build_number == 0 else fast_tests }}  # non-unix verified to be long run failure to clean-up
+        FAST_TESTS: ${{ "0" if build_number == 0 else fast_tests }}
         build_platform: ${{ build_platform }}
         target_platform: ${{ target_platform }}
-        flow_run_id: ${{ env.get("flow_run_id", default="0") }}
-        python_version: ${{ python }}
     files:
       recipe:
         # On non-unix, rattler-build (Issue 2657 upstream), fails to clean large testsuite
         # Use multiple CI rerun or FAST_TEST: 1
         - run_test.${{ "sh" if unix else "bat" }}
     requirements:
-      build:
-        - if: ppc64le_on_aarch64 or ppc64le
-          then:
-            - bash >=5.2
-            - qemu-execve-ppc64le
       run:
-        - ${{ compiler('c') }}
-        - ${{ compiler('cxx') }}
         - pip
-        - python
         - jinja2
         - cffi
         - scipy
         - if: linux and x86_64
-          then:
-            - numpy !=1.26.0
+          then: numpy !=1.26.0
         - ipython
         - setuptools
         - tbb
+        - ${{ compiler('c') }}
+        - ${{ compiler('cxx') }}
+
+  - script:
+      - numba -h
 
 about:
   license: BSD-2-Clause
@@ -188,4 +172,3 @@ extra:
     - step21
     - esc
     - MementoRC
-    

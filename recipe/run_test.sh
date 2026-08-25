@@ -33,6 +33,42 @@ fi
 TEST_NPROCS="${CPU_COUNT}"
 FAST_TESTS="${FAST_TESTS:-0}"
 
+@njit
+def jit_frexp(x):
+    return math.frexp(x)
+
+failures = []
+for x, e, want in ((2.5, -2, 0.625), (1.0, -1, 0.5), (2.5, 0, 2.5), (3.0, 4, 48.0)):
+    got = jit_ldexp(x, e)
+    print('ldexp(%r, %r) = %r  want %r' % (x, e, got, want))
+    if got != want:
+        failures.append('ldexp(%r, %r) -> %r != %r' % (x, e, got, want))
+
+for x, e, want in ((2.5, -2, 0.625), (1.0, -1, 0.5), (2.5, 0, 2.5), (3.0, 4, 48.0)):
+    got = jit_np_ldexp(x, e)
+    print('np.ldexp(%r, %r) = %r  want %r' % (x, e, got, want))
+    if got != want:
+        failures.append('np.ldexp(%r, %r) -> %r != %r' % (x, e, got, want))
+
+_INT32_MIN = -(2 ** 31)
+for label, fn in (('ldexp', jit_ldexp), ('np.ldexp', jit_np_ldexp)):
+    got = fn(2.5, _INT32_MIN)
+    print('%s(2.5, INT32_MIN) = %r  want 0.0' % (label, got))
+    if got != 0.0:
+        failures.append('%s(2.5, INT32_MIN) -> %r != 0.0' % (label, got))
+
+got = jit_frexp(0.625)
+print('frexp(0.625) = %r  want (0.625, 0)' % (got,))
+if got != (0.625, 0):
+    failures.append('frexp(0.625) -> %r != (0.625, 0)' % (got,))
+
+if failures:
+    raise SystemExit('ppc64le ldexp/frexp ABI regression:' + ''.join(['\n  ' + f for f in failures]))
+print('ldexp/np.ldexp/frexp signext probe OK')
+"
+# Run the upstream test explicitly too, since the sampled suite may not select it.
+$SEGVCATCH python -m numba.runtests numba.tests.test_mathlib.TestMathLib.test_ldexp -v
+# --- end ppc64le probe -------------------------------------------------------
 # Check test discovery works
 ${QEMU_EXECVE} ${PYTHON} -m numba.tests.test_runtests
 
