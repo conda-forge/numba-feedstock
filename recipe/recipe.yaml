@@ -1,5 +1,5 @@
 context:
-  build_number: 3
+  build_number: 4
   name: numba
   version: "0.67.0rc1"
   sha256: 36d3f50cbb992a4c40a53f070eb04ae774d8be5c0c733994307f65e134112e3e
