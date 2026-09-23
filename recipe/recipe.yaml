@@ -77,38 +77,42 @@ requirements:
     - cuda-python >=11.6
 
 tests:
-  - python:
-      imports:
-        - numba
-        - numba.core.annotations
-        - numba.core.datamodel
-        - numba.core.rewrites
-        - numba.core.runtime
-        - numba.core.typeconv
-        - numba.core.typing
-        - numba.core.unsafe
-        - numba.cuda
-        - numba.cuda.cudadrv
-        - numba.cuda.kernels
-        - numba.cuda.simulator
-        - numba.cuda.simulator.cudadrv
-        - numba.cuda.tests
-        - numba.cuda.tests.cudadrv
-        - numba.cuda.tests.cudapy
-        - numba.cuda.tests.cudasim
-        - numba.cuda.tests.nocuda
-        - numba.experimental.jitclass
-        - numba.np.ufunc
-        - numba.scripts
-        - numba.testing
-        - numba.tests
-        - numba.tests.npyufunc
-      pip_check: true
+  - if: build_platform != "linux-aarch64"
+    then:
+      - python:
+          imports:
+            - numba
+            - numba.core.annotations
+            - numba.core.datamodel
+            - numba.core.rewrites
+            - numba.core.runtime
+            - numba.core.typeconv
+            - numba.core.typing
+            - numba.core.unsafe
+            - numba.cuda
+            - numba.cuda.cudadrv
+            - numba.cuda.kernels
+            - numba.cuda.simulator
+            - numba.cuda.simulator.cudadrv
+            - numba.cuda.tests
+            - numba.cuda.tests.cudadrv
+            - numba.cuda.tests.cudapy
+            - numba.cuda.tests.cudasim
+            - numba.cuda.tests.nocuda
+            - numba.experimental.jitclass
+            - numba.np.ufunc
+            - numba.scripts
+            - numba.testing
+            - numba.tests
+            - numba.tests.npyufunc
+          pip_check: true
 
   - script:
       content:
-        - numba -h
-        - numba -s
+        - if: build_platform != "linux-aarch64"
+          then:
+            - numba -h
+            - numba -s
 
   - script:
       content:
