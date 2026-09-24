@@ -1,0 +1,55 @@
+# numba.tests.test_random.TestRandomArrays.test_numpy_binomial does not merely
+# run slow under ppc64le emulation, it HANGS: it performs only ~300 RNG draws
+# (a single (n=20, p=0.5) pair over sizes 8 and (2, 3), plus one size=None
+# call), yet it exceeded numba's hard-coded per-result timeout (_TIMEOUT =
+# 1200 in numba/testing/main.py) on conda-forge/numba-feedstock PR #210, lane
+# linux_ppc64le_python3.14.____cp314. Its scalar sibling,
+# TestRandom.test_numpy_binomial, performs ~100,000 draws (5 (n, p) pairs x
+# niters=3, plus a sanity loop of n in (100, 1000, 10000) x 9 p-values) and
+# completes in 4.344s under the SAME ppc64le emulation. Root cause not yet
+# isolated: either an infinite rejection loop (n*p = 10 < 30 selects numpy's
+# inversion path, a while loop over uniforms) or a pathological compile of
+# the array specialization -- possibly the same LLVM-codegen-vs-QEMU-TCG
+# family as skip-test_unique-on-ppc64le.patch. A bounded triage probe in
+# recipe/run_test.sh classifies it on each ppc64le run. See
+# conda-forge/numba-feedstock#210.
+--- a/numba/tests/test_random.py
++++ b/numba/tests/test_random.py
+@@ -3,6 +3,7 @@
+ import math
+ import multiprocessing
+ import os
++import platform
+ import random
+ import subprocess
+ import sys
+@@ -21,6 +21,15 @@
+ from numba.core.errors import TypingError
+
+
++# Gate directly on target architecture rather than any runtime emulation
++# signal (e.g. QEMU_EXECVE): this feedstock only ever produces ppc64le via
++# QEMU user-mode cross-emulation, so the two conditions coincide in CI, and
++# platform.machine() does not depend on the emulator wiring or env var
++# propagation. Set NUMBA_CF_RUN_SKIPPED=1 to force this test to run anyway
++# (e.g. to re-probe whether the underlying gap has been fixed). See
++# conda-forge/numba-feedstock#210.
++_NUMBA_CF_PPC64LE = platform.machine() == "ppc64le" and os.environ.get("NUMBA_CF_RUN_SKIPPED") != "1"
++
+ # State size of the Mersenne Twister
+ N = 624
+
+@@ -1139,7 +1139,13 @@
+     def test_numpy_beta(self):
+         self._check_array_dist_self("beta", (0.5, 2.5))
+
++    @unittest.skipIf(
++        _NUMBA_CF_PPC64LE,
++        "Hangs under ppc64le emulation (not merely slow -- exceeds numba's "
++        "1200s per-test timeout despite ~300 draws vs. the scalar sibling's "
++        "~100000 draws in 4.344s); see conda-forge/numba-feedstock#210.",
++    )
+     def test_numpy_binomial(self):
+         self._check_array_dist("binomial", (20, 0.5))
+
+     def test_numpy_chisquare(self):
