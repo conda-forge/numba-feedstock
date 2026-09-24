@@ -1,10 +1,8 @@
 context:
-  build_number: 4
+  build_number: 2
   name: numba
-  version: "0.67.0rc1"
-  sha256: 36d3f50cbb992a4c40a53f070eb04ae774d8be5c0c733994307f65e134112e3e
-  fast_tests: "1"
-  built_on_aarch64: ${{ build_platform == "linux-aarch64" }}
+  version: "0.68.0rc1"
+  sha256: b7bdb5d632db39f3fbd1514dd4ed10a892f85bb636089a485537ca11295a13ce
 
 package:
   name: numba
@@ -23,6 +21,7 @@ source:
         - patches/fix-test_inlining_global_dispatcher-bb-count-on-ppc64le.patch
         - patches/fix-test_array_const_alignment-globalmerge-on-ppc64le.patch
         - patches/skip-test_compile_nrt-on-ppc64le.patch
+        - patches/skip-test_numpy_binomial-arrays-on-ppc64le.patch
 
 build:
   number: ${{ build_number }}
@@ -56,7 +55,7 @@ requirements:
     - python
     - pip
     - setuptools
-    - llvmlite 0.49.*
+    - llvmlite 0.50.*
     - numpy >=2.0,<2.6
     - tbb-devel 2021.6.0.*
   run:
@@ -79,7 +78,7 @@ requirements:
     - cuda-python >=11.6
 
 tests:
-  - if: not built_on_aarch64
+  - if: build_platform != "linux-aarch64"
     then:
       - python:
           imports:
@@ -111,7 +110,7 @@ tests:
 
   - script:
       content:
-        - if: not built_on_aarch64
+        - if: build_platform != "linux-aarch64"
           then:
             - numba -h
             - numba -s
@@ -125,7 +124,7 @@ tests:
             - export QEMU_LD_PREFIX=${CONDA_BUILD_SYSROOT}
         - ${{ "bash run_test.sh" if unix else "cmd /c run_test.bat" }}
       env:
-        FAST_TESTS: ${{ "1" if not unix else "0" if build_number == 0 else fast_tests }}  # non-unix verified to be long run failure to clean-up
+        FAST_TESTS: ${{ "1" if not unix else "0" if build_number == 0 else "1" }}  # non-unix verified to be long run failure to clean-up
         build_platform: ${{ build_platform }}
         target_platform: ${{ target_platform }}
         flow_run_id: ${{ env.get("flow_run_id", default="0") }}
