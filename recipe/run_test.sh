@@ -545,6 +545,78 @@ $SEGVCATCH ${QEMU_EXECVE} ${PYTHON} -m numba.runtests -v \
   numba.tests.test_recursion
 # --- end forefronted known-red tests -----------------------------------------
 
+# --- bounded triage probe for test_numpy_binomial hang (conda-forge/numba-feedstock#210)
+# numba.tests.test_random.TestRandomArrays.test_numpy_binomial is skipped on
+# ppc64le by patches/skip-test_numpy_binomial-arrays-on-ppc64le.patch because it
+# hangs under QEMU emulation rather than failing or being slow. This is a
+# SIZING anomaly, not a slowness one: the array-producing binomial test draws
+# ~300 RNG values, while its scalar sibling draws ~100,000 values and completes
+# in 4.344s on the same emulation. ~300 draws should not hang when ~100,000
+# draws does not, so something other than draw count is at fault.
+#
+# This probe is diagnostic only, MUST NOT fail the lane, and MUST be bounded --
+# unbounded, this is exactly the test that hangs and would wedge the whole job
+# for the remainder of the CI timeout. It uses "env NUMBA_CF_RUN_SKIPPED=1" as
+# a per-command assignment (matching the env-wrapped style used above), NOT an
+# export, so only these two probe commands override the skip patch; the skip
+# patch itself stays in effect for the real suite below.
+#
+# Two probes discriminate the two candidate mechanisms:
+#   (a) COMPILE probe: force compilation of the array-producing binomial
+#       specialization via .compile(), with NO execution, so zero RNG draws
+#       happen.
+#   (b) EXECUTE probe: actually run the test.
+# Interpretation:
+#   compile OK, execute TIMEOUT -> runtime infinite loop (the draw loop itself
+#     never terminates under emulation)
+#   compile TIMEOUT             -> codegen/compile pathology (the hang is in
+#     LLVM lowering or numba's typing of this specialization, not in the
+#     generated code's runtime behaviour)
+if [[ "${target_platform:-}" == "linux-ppc64le" ]]; then
+  echo "VERIFY: bounded triage probe for test_numpy_binomial hang -- #210"
+
+  _t0=${SECONDS}
+  set +e
+  timeout 180 env NUMBA_CF_RUN_SKIPPED=1 ${QEMU_EXECVE} ${PYTHON} -c "
+import numba
+import numpy as np
+
+@numba.njit
+def f():
+    return np.random.binomial(20, 0.5, 8)
+
+f.compile(())
+print('COMPILE_PROBE: compiled without executing')
+"
+  _probe_compile_rc=$?
+  set -e
+  _probe_compile_elapsed=$((SECONDS - _t0))
+  if [[ "${_probe_compile_rc}" -eq 124 ]]; then
+    echo "TRIAGE TIMEOUT: COMPILE probe (${_probe_compile_elapsed}s) -- codegen/compile pathology, hang is in compilation not runtime"
+  elif [[ "${_probe_compile_rc}" -eq 0 ]]; then
+    echo "TRIAGE PASS: COMPILE probe (${_probe_compile_elapsed}s) -- compiled cleanly, zero draws executed"
+  else
+    echo "TRIAGE FAIL: COMPILE probe (${_probe_compile_elapsed}s) -- exited ${_probe_compile_rc}, not a timeout, inspect output above"
+  fi
+
+  _t0=${SECONDS}
+  set +e
+  timeout 180 env NUMBA_CF_RUN_SKIPPED=1 $SEGVCATCH ${QEMU_EXECVE} ${PYTHON} -m unittest -v numba.tests.test_random.TestRandomArrays.test_numpy_binomial
+  _probe_execute_rc=$?
+  set -e
+  _probe_execute_elapsed=$((SECONDS - _t0))
+  if [[ "${_probe_execute_rc}" -eq 124 ]]; then
+    echo "TRIAGE TIMEOUT: EXECUTE probe (${_probe_execute_elapsed}s) -- if COMPILE probe passed, this is a runtime infinite loop, not a compile pathology"
+  elif [[ "${_probe_execute_rc}" -eq 0 ]]; then
+    echo "TRIAGE PASS: EXECUTE probe (${_probe_execute_elapsed}s) -- test_numpy_binomial actually passed on this run"
+  else
+    echo "TRIAGE FAIL: EXECUTE probe (${_probe_execute_elapsed}s) -- exited ${_probe_execute_rc}, not a timeout, inspect output above"
+  fi
+
+  echo "TRIAGE: compile_rc=${_probe_compile_rc} execute_rc=${_probe_execute_rc} (124=timeout, 0=pass)"
+fi
+# --- end test_numpy_binomial triage probe ------------------------------------
+
 TEST_NPROCS="${CPU_COUNT}"
 FAST_TESTS="${FAST_TESTS:-0}"
 

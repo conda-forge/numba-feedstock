@@ -21,6 +21,7 @@ source:
         - patches/fix-test_inlining_global_dispatcher-bb-count-on-ppc64le.patch
         - patches/fix-test_array_const_alignment-globalmerge-on-ppc64le.patch
         - patches/skip-test_compile_nrt-on-ppc64le.patch
+        - patches/skip-test_numpy_binomial-arrays-on-ppc64le.patch
 
 build:
   number: ${{ build_number }}
