@@ -546,22 +546,33 @@ $SEGVCATCH ${QEMU_EXECVE} ${PYTHON} -m numba.runtests -v \
 # --- end forefronted known-red tests -----------------------------------------
 
 # --- bounded triage probe for test_numpy_binomial hang (conda-forge/numba-feedstock#210)
-# numba.tests.test_random.TestRandomArrays.test_numpy_binomial is skipped on
-# ppc64le by patches/skip-test_numpy_binomial-arrays-on-ppc64le.patch because it
-# hangs under QEMU emulation rather than failing or being slow. This is a
-# SIZING anomaly, not a slowness one: the array-producing binomial test draws
-# ~300 RNG values, while its scalar sibling draws ~100,000 values and completes
-# in 4.344s on the same emulation. ~300 draws should not hang when ~100,000
-# draws does not, so something other than draw count is at fault.
+# The skip patch (skip-test_numpy_binomial-arrays-on-ppc64le.patch) has been
+# removed: numba.tests.test_random.TestRandomArrays.test_numpy_binomial now
+# runs in the sampled suite below like any other test.
+#
+# The failure is INTERMITTENT, not deterministic. On PR #210 commit
+# ed8bc476, all five ppc64le lanes (cp311, cp312, cp313, cp314, cp314t) ran
+# this test successfully when forced, at 20-27s compile and 24-33s execute.
+# The single original timeout on cp314 has not reproduced since.
+#
+# This probe is KEPT even though the test is no longer skipped: the main
+# suite below is --random sampled, so this test is drawn only some of the
+# time, and a green log is not evidence that it ran. This probe runs it
+# unsampled on every ppc64le lane, on every CI run, giving a deterministic
+# per-lane record of compile and execute cost -- the data needed to
+# establish the real flake rate.
+#
+# If the hang recurs inside the sampled suite, patches/label-known-flaky-timeouts.patch
+# makes numba's parallel-runner timeout print a greppable
+# "NUMBA_CF_KNOWN_FLAKY_TIMEOUT:" banner naming this test. Grep the lane log
+# for that token: it means known intermittent flake, rerun the lane, it is
+# not a regression.
 #
 # This probe is diagnostic only, MUST NOT fail the lane, and MUST be bounded --
-# unbounded, this is exactly the test that hangs and would wedge the whole job
-# for the remainder of the CI timeout. It uses "env NUMBA_CF_RUN_SKIPPED=1" as
-# a per-command assignment (matching the env-wrapped style used above), NOT an
-# export, so only these two probe commands override the skip patch; the skip
-# patch itself stays in effect for the real suite below.
+# unbounded, this is exactly the test that has hung before and would wedge
+# the whole job for the remainder of the CI timeout.
 #
-# Two probes discriminate the two candidate mechanisms:
+# Two probes discriminate compile-time cost/failure from run-time:
 #   (a) COMPILE probe: force compilation of the array-producing binomial
 #       specialization via .compile(), with NO execution, so zero RNG draws
 #       happen.
@@ -577,7 +588,7 @@ if [[ "${target_platform:-}" == "linux-ppc64le" ]]; then
 
   _t0=${SECONDS}
   set +e
-  timeout 180 env NUMBA_CF_RUN_SKIPPED=1 ${QEMU_EXECVE} ${PYTHON} -c "
+  timeout 180 ${QEMU_EXECVE} ${PYTHON} -c "
 import numba
 import numpy as np
 
@@ -601,7 +612,7 @@ print('COMPILE_PROBE: compiled without executing')
 
   _t0=${SECONDS}
   set +e
-  timeout 180 env NUMBA_CF_RUN_SKIPPED=1 $SEGVCATCH ${QEMU_EXECVE} ${PYTHON} -m unittest -v numba.tests.test_random.TestRandomArrays.test_numpy_binomial
+  timeout 180 $SEGVCATCH ${QEMU_EXECVE} ${PYTHON} -m unittest -v numba.tests.test_random.TestRandomArrays.test_numpy_binomial
   _probe_execute_rc=$?
   set -e
   _probe_execute_elapsed=$((SECONDS - _t0))

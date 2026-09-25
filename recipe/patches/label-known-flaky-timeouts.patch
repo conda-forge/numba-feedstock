@@ -1,0 +1,67 @@
+# ppc64le CI lanes intermittently hit a parallel-runner timeout on
+# test_random.TestRandomArrays.test_numpy_binomial under QEMU user-mode
+# emulation. This is not deterministic: on PR #210 commit ed8bc476, all
+# five ppc64le lanes (cp311, cp312, cp313, cp314, cp314t) ran the test to
+# completion when forced, at 20-27s compile and 24-33s execute. Label a
+# parallel-runner timeout against this known-flaky set with a greppable
+# stderr banner instead of leaving CI logs to look like a plain hang, so
+# the intermittent-hang vs regression distinction is visible without
+# swallowing the exception. See conda-forge/numba-feedstock#210.
+--- a/numba/testing/main.py
++++ b/numba/testing/main.py
+@@ -5,6 +5,7 @@
+ import gc
+ import multiprocessing
+ import os
++import platform
+ import random
+ import sys
+ import time
+@@ -773,6 +774,20 @@
+ # A test can't run longer than 10 minutes
+ _TIMEOUT = 1200
+
++# On ppc64le, a small number of tests are known to hang intermittently
++# under QEMU user-mode emulation rather than deterministically -- see
++# conda-forge/numba-feedstock#210. On PR #210 commit ed8bc476, all five
++# ppc64le lanes (cp311, cp312, cp313, cp314, cp314t) ran the test to
++# completion when forced, at 20-27s compile and 24-33s execute. A
++# parallel-runner timeout whose unfinished-test set intersects this set
++# is therefore a known flake, not a regression.
++if platform.machine() == "ppc64le":
++    _NUMBA_CF_KNOWN_FLAKY = frozenset((
++        "numba.tests.test_random.TestRandomArrays.test_numpy_binomial",
++    ))
++else:
++    _NUMBA_CF_KNOWN_FLAKY = frozenset()
++
+ class ParallelTestRunner(runner.TextTestRunner):
+     """
+     A test runner which delegates the actual running to a pool of child
+@@ -851,6 +866,26 @@
+             except StopIteration:
+                 return
+             except TimeoutError as e:
++                known_flaky = remaining_ids & _NUMBA_CF_KNOWN_FLAKY
++                if known_flaky:
++                    print("=" * 70, file=sys.stderr)
++                    print(
++                        "NUMBA_CF_KNOWN_FLAKY_TIMEOUT: %s"
++                        % ", ".join(sorted(known_flaky)),
++                        file=sys.stderr,
++                    )
++                    print(
++                        "Known intermittent ppc64le QEMU hang -- see "
++                        "conda-forge/numba-feedstock#210.",
++                        file=sys.stderr,
++                    )
++                    print(
++                        "This lane is a rerun away from passing; not a "
++                        "regression.",
++                        file=sys.stderr,
++                    )
++                    print("=" * 70, file=sys.stderr)
++                    sys.stderr.flush()
+                 # Diagnose the names of unfinished tests
+                 msg = ("Tests didn't finish before timeout (or crashed):\n%s"
+                        % "".join("- %r\n" % tid for tid in sorted(remaining_ids))
