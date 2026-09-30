@@ -1,0 +1,36 @@
+# numba#10610: test_reproducible_build_recursive_type is an expectedFailure
+# nondeterminism check. On ppc64le it passes intermittently (py3.13/3.14 on
+# PR #213, xfail on py3.11/3.12 and on rc1), and an unexpected success fails
+# the suite. Retire when numba#10610 closes.
+--- a/numba/tests/test_pycc.py
++++ b/numba/tests/test_pycc.py
+@@ -1,6 +1,7 @@
+ import contextlib
+ import importlib
+ import os
++import platform
+ import shutil
+ import subprocess
+ import sys
+@@ -22,6 +23,10 @@
+
+ import unittest
+
++# Skip gate for known ppc64le issues; NUMBA_CF_RUN_SKIPPED=1 forces the
++# tests to run anyway.
++_NUMBA_CF_PPC64LE = platform.machine() == "ppc64le" and os.environ.get("NUMBA_CF_RUN_SKIPPED") != "1"
++
+
+ _skip_reason = 'windows only'
+ _windows_only = unittest.skipIf(not sys.platform.startswith('win'),
+@@ -370,6 +375,10 @@
+         self.assertEqual(h1, h2,
+                          "AOT jitclass binary is not reproducible")
+
++    @unittest.skipIf(
++        _NUMBA_CF_PPC64LE,
++        "numba#10610: nondeterministic on ppc64le, can pass unexpectedly",
++    )
+     @unittest.expectedFailure
+     @skip_if_windows
+     def test_reproducible_build_recursive_type(self):

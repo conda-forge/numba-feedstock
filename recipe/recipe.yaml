@@ -16,6 +16,7 @@ source:
     - if: ppc64le
       then:
         - patches/skip-test_unique-on-ppc64le.patch
+        - patches/skip-test_reproducible_build_recursive_type-on-ppc64le.patch
 
 build:
   number: ${{ build_number }}

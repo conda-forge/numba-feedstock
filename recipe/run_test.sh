@@ -20,8 +20,8 @@ TEST_NPROCS="${CPU_COUNT}"
 FAST_TESTS="${FAST_TESTS:-0}"
 
 # --- ppc64le ldexp/frexp quick-fail probe (numba#8489) -----------------------
-# The suite at the end of this script runs with --random=0.08 on cross-compiled
-# targets, so test_mathlib.TestMathLib.test_ldexp may never be drawn. Verify the
+# The suite at the end of this script runs with --random=0.25 (build 0) or 0.08
+# on cross-compiled targets, so test_mathlib.TestMathLib.test_ldexp may never be drawn. Verify the
 # ELFv2 signext fix directly, and fail fast and loudly here if it regresses.
 #
 # math.ldexp with a NEGATIVE exponent crosses the JIT -> numba_ldexp C helper
@@ -96,7 +96,9 @@ if [[ "$(python -c "$_NPY_CMD")" == "True" ]]; then
   export NPY_DISABLE_CPU_FEATURES="AVX512_SKX"
 fi
 
-if [[ "$build_platform" != "$target_platform" ]]; then
+if [[ "$build_platform" != "$target_platform" && "$FAST_TESTS" == "0" ]]; then
+  RANDOM_ARG="--random=0.25"
+elif [[ "$build_platform" != "$target_platform" ]]; then
   RANDOM_ARG="--random=0.08"
 elif [[ "$target_platform" == "osx-64" && "$FAST_TESTS" == "1" ]]; then
   RANDOM_ARG="--random=0.5"
