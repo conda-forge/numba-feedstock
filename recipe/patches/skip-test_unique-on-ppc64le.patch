@@ -1,0 +1,43 @@
+# numba#4563 "Unicode Array codegen triggers LLVM bug on PPC64LE" (open since 2019).
+# np.unique over a unicode array hits an LLVM PPC call-lowering bug (PPCISelLowering.cpp,
+# LowerCall_64SVR4, "Parameter area must exist to pass an argument in memory"); upstream's
+# own resolution is to skip on ppc64le. Retire when numba#4563 closes.
+--- a/numba/tests/test_array_methods.py
++++ b/numba/tests/test_array_methods.py
+@@ -1,5 +1,7 @@
+ from itertools import product, cycle, permutations, chain
+ import gc
++import os
++import platform
+ import sys
+ import unittest
+ import warnings
+@@ -13,6 +15,15 @@
+                                  needs_blas, skip_if_numpy_2,
+                                  expected_failure_np2)
+
++# Gate directly on target architecture rather than any runtime emulation
++# signal (e.g. QEMU_EXECVE): this feedstock only ever produces ppc64le via
++# QEMU user-mode cross-emulation, so the two conditions coincide in CI, and
++# platform.machine() does not depend on the emulator wiring or env var
++# propagation. Set NUMBA_CF_RUN_SKIPPED=1 to force these tests to run
++# anyway (e.g. to re-probe whether the underlying gap has been fixed).
++# See conda-forge/numba-feedstock#192.
++_NUMBA_CF_PPC64LE = platform.machine() == "ppc64le" and os.environ.get("NUMBA_CF_RUN_SKIPPED") != "1"
++
+ TIMEDELTA_M = 'timedelta64[M]'
+ TIMEDELTA_Y = 'timedelta64[Y]'
+
+@@ -2005,6 +2016,12 @@
+             z = x + 1j*y
+             np.testing.assert_equal(pyfunc(z), cfunc(z))
+
++    @unittest.skipIf(
++        _NUMBA_CF_PPC64LE,
++        "numba#4563: LLVM PPC64LE call-lowering bug miscompiles "
++        "unicode-array code (np.unique over <U16 segfaults); "
++        "upstream skips the affected tests on ppc64le",
++    )
+     def test_unique(self):
+         pyfunc = np_unique
+         cfunc = jit(nopython=True)(pyfunc)

@@ -12,6 +12,10 @@ package:
 source:
   url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/${{ name }}-${{ version }}.tar.gz
   sha256: ${{ sha256 }}
+  patches:
+    - if: ppc64le
+      then:
+        - patches/skip-test_unique-on-ppc64le.patch
 
 build:
   number: ${{ build_number }}
