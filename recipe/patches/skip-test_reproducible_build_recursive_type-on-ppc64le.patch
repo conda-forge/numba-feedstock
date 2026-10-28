@@ -1,7 +1,9 @@
-# numba#10610: test_reproducible_build_recursive_type is an expectedFailure
-# nondeterminism check. On ppc64le it passes intermittently (py3.13/3.14 on
-# PR #213, xfail on py3.11/3.12 and on rc1), and an unexpected success fails
-# the suite. Retire when numba#10610 closes.
+# numba#10610: the four expectedFailure nondeterminism checks in test_pycc.py
+# (test_reproducible_build_jitclass, _recursive_type, _stencil and
+# _set_iteration_order) pass intermittently on ppc64le (recursive_type on
+# py3.13/3.14 on PR #213; stencil unexpected success on py3.13/3.15 on
+# PR #215), and an unexpected success fails the suite. Retire when
+# numba#10610 closes.
 --- a/numba/tests/test_pycc.py
 +++ b/numba/tests/test_pycc.py
 @@ -1,6 +1,7 @@
@@ -23,7 +25,18 @@
 
  _skip_reason = 'windows only'
  _windows_only = unittest.skipIf(not sys.platform.startswith('win'),
-@@ -370,6 +375,10 @@
+@@ -331,6 +336,10 @@
+         self.assertEqual(h1, h2,
+                          "AOT binary is not reproducible across builds")
+
++    @unittest.skipIf(
++        _NUMBA_CF_PPC64LE,
++        "numba#10610: nondeterministic on ppc64le, can pass unexpectedly",
++    )
+     @unittest.expectedFailure
+     @skip_if_windows
+     def test_reproducible_build_jitclass(self):
+@@ -370,6 +379,10 @@
          self.assertEqual(h1, h2,
                           "AOT jitclass binary is not reproducible")
 
@@ -34,3 +47,25 @@
      @unittest.expectedFailure
      @skip_if_windows
      def test_reproducible_build_recursive_type(self):
+@@ -424,6 +437,10 @@
+         self.assertEqual(h1, h2,
+                          "AOT recursive-type binary is not reproducible")
+
++    @unittest.skipIf(
++        _NUMBA_CF_PPC64LE,
++        "numba#10610: nondeterministic on ppc64le, can pass unexpectedly",
++    )
+     @unittest.expectedFailure
+     @skip_if_windows
+     def test_reproducible_build_stencil(self):
+@@ -460,6 +477,10 @@
+                          "AOT stencil binary is not reproducible")
+
+     @skip_if_windows
++    @unittest.skipIf(
++        _NUMBA_CF_PPC64LE,
++        "numba#10610: nondeterministic on ppc64le, can pass unexpectedly",
++    )
+     @unittest.expectedFailure
+     def test_reproducible_build_set_iteration_order(self):
+         """See https://github.com/numba/numba/issues/10610
