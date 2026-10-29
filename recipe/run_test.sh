@@ -19,6 +19,13 @@ fi
 TEST_NPROCS="${CPU_COUNT}"
 FAST_TESTS="${FAST_TESTS:-0}"
 
+# Under emulation LLVM's riscv64 host feature detection reports zvl*b without
+# v, and the first jit compile aborts. Pin the target to the build's -march.
+if [[ "${target_platform:-}" == "linux-riscv64" ]]; then
+  export NUMBA_CPU_NAME=generic-rv64
+  export NUMBA_CPU_FEATURES=+m,+a,+f,+d,+c
+fi
+
 # --- ppc64le ldexp/frexp quick-fail probe (numba#8489) -----------------------
 # The suite at the end of this script runs with --random=0.25 (build 0) or 0.08
 # on cross-compiled targets, so test_mathlib.TestMathLib.test_ldexp may never be drawn. Verify the
