@@ -1,8 +1,8 @@
 context:
-  build_number: 2
+  build_number: 0
   name: numba
-  version: "0.68.0rc1"
-  sha256: b7bdb5d632db39f3fbd1514dd4ed10a892f85bb636089a485537ca11295a13ce
+  version: "0.68.1rc2"
+  sha256: 6f6b3c8d7dc0e718ec2c5bbe825d65cac9d4a3f41b6a2a1017f84d098d06f2b3
 
 package:
   name: numba
