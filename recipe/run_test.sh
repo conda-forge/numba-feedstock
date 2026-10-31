@@ -3,6 +3,13 @@
 set -euxo pipefail
 IFS=$'\n\t'
 
+# Run the guest under qemu-execve (empty on native lanes, expands away).
+# Native build-platform binaries (e.g. the cross-compiler driver) are forwarded
+# to the host kernel only when BOTH QEMU_EXECVE and
+# QEMU_EXECVE_NATIVE_PASSTHROUGH are set. See conda-forge/numba-feedstock#201.
+export CROSSCOMPILING_EMULATOR="${QEMU_EXECVE}"
+export QEMU_EXECVE_NATIVE_PASSTHROUGH=1
+
 export NUMBA_DEVELOPER_MODE=1
 export NUMBA_DISABLE_ERROR_MESSAGE_HIGHLIGHTING=1
 export PYTHONFAULTHANDLER=1
@@ -18,6 +25,22 @@ fi
 
 TEST_NPROCS="${CPU_COUNT}"
 FAST_TESTS="${FAST_TESTS:-0}"
+
+# --- qemu-execve native-passthrough quick-fail (conda-forge/numba-feedstock#203)
+# Make the GUEST python exec a NATIVE build-platform binary (the cross-compiler
+# driver); if the passthrough gate is not armed this dies here, in well under a
+# second, instead of deep in the test_pycc/test_cffi family.
+# ${CC} carries "-pthread" from above, so strip arguments before exec'ing it.
+_CC_BIN="${CC:-}"
+_CC_BIN="${_CC_BIN%% *}"
+if [[ -n "${QEMU_EXECVE:-}" && -n "${_CC_BIN}" ]]; then
+  echo "VERIFY: qemu-execve native-arch passthrough (guest exec of ${_CC_BIN}) -- #203"
+  ${QEMU_EXECVE} ${PYTHON} -c \
+    'import subprocess, sys; subprocess.check_call([sys.argv[1], "--version"])' \
+    "${_CC_BIN}"
+fi
+unset _CC_BIN
+# --- end native-passthrough quick-fail ---------------------------------------
 
 # Under emulation LLVM's riscv64 host feature detection reports zvl*b without
 # v, and the first jit compile aborts. Pin the target to the build's -march.
@@ -41,7 +64,7 @@ fi
 # declared in numba/cpython/mathimpl.py, while the ufunc path is declared in
 # numba/np/math/mathimpl.py via numba/np/npyfuncs.py. A signext fix to one
 # does not cover the other, so both are probed here.
-python -c "
+${QEMU_EXECVE} ${PYTHON} -c "
 import math
 import numpy as np
 from numba import njit
@@ -88,10 +111,10 @@ if failures:
 print('ldexp/np.ldexp/frexp signext probe OK')
 "
 # Run the upstream test explicitly too, since the sampled suite may not select it.
-$SEGVCATCH python -m numba.runtests numba.tests.test_mathlib.TestMathLib.test_ldexp -v
+$SEGVCATCH ${QEMU_EXECVE} ${PYTHON} -m numba.runtests numba.tests.test_mathlib.TestMathLib.test_ldexp -v
 # --- end ppc64le probe -------------------------------------------------------
 # Check test discovery works
-python -m numba.tests.test_runtests
+${QEMU_EXECVE} ${PYTHON} -m numba.tests.test_runtests
 
 # Disable NumPy AVX512_SKX dispatch when it is dispatchable and NumPy >= 1.22
 # (avoids low-accuracy SVML libm replacements in ufunc loops).
@@ -99,7 +122,7 @@ _NPY_CMD='from numba.misc import numba_sysinfo;\
           sysinfo=numba_sysinfo.get_sysinfo();\
           print("AVX512_SKX" in sysinfo.get("NumPy Supported SIMD dispatch", ()) and
                 sysinfo.get("NumPy Version", "0")>="1.22")'
-if [[ "$(python -c "$_NPY_CMD")" == "True" ]]; then
+if [[ "$(${QEMU_EXECVE} ${PYTHON} -c "$_NPY_CMD")" == "True" ]]; then
   export NPY_DISABLE_CPU_FEATURES="AVX512_SKX"
 fi
 
@@ -113,4 +136,4 @@ else
   RANDOM_ARG=""
 fi
 
-$SEGVCATCH python -m numba.runtests -b $RANDOM_ARG --exclude-tags=long_running -m "$TEST_NPROCS"
+$SEGVCATCH ${QEMU_EXECVE} ${PYTHON} -m numba.runtests -b $RANDOM_ARG --exclude-tags=long_running -m "$TEST_NPROCS"

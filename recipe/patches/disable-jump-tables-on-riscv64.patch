@@ -1,0 +1,11 @@
+--- a/numba/core/codegen.py
++++ b/numba/core/codegen.py
+@@ -1422,6 +1422,8 @@
+     """
+     ll.initialize_native_target()
+     ll.initialize_native_asmprinter()
++    if ll.get_process_triple().startswith('riscv64'):
++        ll.set_option('', '--riscv-min-jump-table-entries=1000')
+ 
+ 
+ def get_host_cpu_features():
