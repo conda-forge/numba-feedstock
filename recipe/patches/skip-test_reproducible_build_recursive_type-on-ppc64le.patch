@@ -1,11 +1,31 @@
-# numba#10610: the test_reproducible_build_* AOT nondeterminism checks are
-# expectedFailure upstream. On ppc64le they pass intermittently
-# (recursive_type on PR #213, stencil on PR #218), and an unexpected success
-# fails the suite. Applies after skip-test_compile_nrt-on-ppc64le.patch,
-# which defines _NUMBA_CF_PPC64LE. Retire when numba#10610 closes.
+# numba#10610: the four expectedFailure nondeterminism checks in test_pycc.py
+# (test_reproducible_build_jitclass, _recursive_type, _stencil and
+# _set_iteration_order) pass intermittently on ppc64le (recursive_type on
+# py3.13/3.14 on PR #213; stencil unexpected success on py3.13/3.15 on
+# PR #215), and an unexpected success fails the suite. Retire when
+# numba#10610 closes.
 --- a/numba/tests/test_pycc.py
 +++ b/numba/tests/test_pycc.py
-@@ -348,6 +348,10 @@
+@@ -1,6 +1,7 @@
+ import contextlib
+ import importlib
+ import os
++import platform
+ import shutil
+ import subprocess
+ import sys
+@@ -22,6 +23,10 @@
+
+ import unittest
+
++# Skip gate for known ppc64le issues; NUMBA_CF_RUN_SKIPPED=1 forces the
++# tests to run anyway.
++_NUMBA_CF_PPC64LE = platform.machine() == "ppc64le" and os.environ.get("NUMBA_CF_RUN_SKIPPED") != "1"
++
+
+ _skip_reason = 'windows only'
+ _windows_only = unittest.skipIf(not sys.platform.startswith('win'),
+@@ -331,6 +336,10 @@
          self.assertEqual(h1, h2,
                           "AOT binary is not reproducible across builds")
 
@@ -16,7 +36,7 @@
      @unittest.expectedFailure
      @skip_if_windows
      def test_reproducible_build_jitclass(self):
-@@ -387,6 +391,10 @@
+@@ -370,6 +379,10 @@
          self.assertEqual(h1, h2,
                           "AOT jitclass binary is not reproducible")
 
@@ -27,7 +47,7 @@
      @unittest.expectedFailure
      @skip_if_windows
      def test_reproducible_build_recursive_type(self):
-@@ -441,6 +449,10 @@
+@@ -424,6 +437,10 @@
          self.assertEqual(h1, h2,
                           "AOT recursive-type binary is not reproducible")
 
@@ -38,14 +58,14 @@
      @unittest.expectedFailure
      @skip_if_windows
      def test_reproducible_build_stencil(self):
-@@ -476,6 +488,10 @@
-         self.assertEqual(h1, h2,
+@@ -460,6 +477,10 @@
                           "AOT stencil binary is not reproducible")
 
+     @skip_if_windows
 +    @unittest.skipIf(
 +        _NUMBA_CF_PPC64LE,
 +        "numba#10610: nondeterministic on ppc64le, can pass unexpectedly",
 +    )
-     @skip_if_windows
      @unittest.expectedFailure
      def test_reproducible_build_set_iteration_order(self):
+         """See https://github.com/numba/numba/issues/10610
